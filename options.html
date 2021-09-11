@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Screenshot Scrubber Options</title>
+  </head>
+  <body style="background-color:cornflowerblue;">
+        <center>
+            <img src="./images/DocScreenshotScrubberIcon128.png">
+            <h1>Screenshot Scrubber Options</h1>
+            <h3>
+                <table>
+                    <tr><td>Set text values to be replaced on the page and the new replacement values to the list below.</td></tr>
+                    <tr><td>Initial suggested values are provided, but you can customize however you need.</td></tr>
+                    <tr><td>To use the extension, just click the extension icon to replace text or images then.</td></tr>
+                </table>
+            </h3>
+            <small>
+                <table>
+                    <tr><td><center><b>NOTE:</b></center></td></tr>
+                    <tr><td>To replace <i>images</i>, use "<b>img.</b>" followed by the image <b>class</b> for <b>Original Text</b>:<br>
+                        <li>Browse to a page containing the image to be replaced.</li>
+                        <li>Press F12 to open the browser debugger window.</li>
+                        <li>Select the Elements tab.</li>
+                        <li>Click on the HTML source displayed in the upper left area of the tab.</li>
+                        <li>Press Ctrl-F to search within the HTML source.</li>
+                        <li>Type <b>&lt;img</b> to search for image tags.</li>
+                        <li>Search through all the tags to find the image you need to replace.</li>
+                        <li>Use "<b>img.</b>" followed by the HTML <b>class</b> attribute value for the image as the <b>Original Text</b>.</li>
+                        <li>Use the URL of the replacement image as the <b>New Text</b>.</li>
+                    </td></tr>
+                </table>
+            </small>
+            <h2>Values to replace</h2>
+            <table id="SettingsList">
+                <tr>
+                    <td></td><td><b>Original Value&nbsp;&nbsp;&nbsp;&nbsp;</b></td><td><b>New Value</b></td><td></td>
+                </tr>
+                <tr id="Row0">
+                    <td></td>
+                    <td><input type="text" id="Original0" value="Microsoft" size=35></input></td>
+                    <td><input type="text" id="New0" value="Contoso, Ltd." size=35></input></td>
+                    <td><img valign=bottom src="./images/minus.png" id="Delete0"></td>
+                </tr>
+                <tr>
+                    <td></td><td></td><td></td><td><img id="AddRowButton" src="./images/plus.png"></td>
+                </tr>
+            </table>
+        </center>
+        <script src="options.js"></script>
+  </body>
+</html>

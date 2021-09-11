@@ -1,0 +1,31 @@
+{
+    "name": "Screenshot Scrubber",
+    "description": "This extension replaces values in web pages, to remove PII for screenshots.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": ["storage", "activeTab", "scripting", "contextMenus", "tabs"],
+    "options_page": "options.html",
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [{
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["contentscript.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }],
+    "action": {
+      "default_icon": {
+        "16": "/images/DocScreenshotScrubberIcon16.png",
+        "32": "/images/DocScreenshotScrubberIcon32.png",
+        "48": "/images/DocScreenshotScrubberIcon48.png",
+        "128": "/images/DocScreenshotScrubberIcon128.png"
+      }
+    },
+    "icons": {
+      "16": "/images/DocScreenshotScrubberIcon16.png",
+      "32": "/images/DocScreenshotScrubberIcon32.png",
+      "48": "/images/DocScreenshotScrubberIcon48.png",
+      "128": "/images/DocScreenshotScrubberIcon128.png"
+    }
+  }
