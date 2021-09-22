@@ -22,6 +22,7 @@ document.addEventListener('mouseup', function(mousePos){
                       left: offsets.left,
                       width: offsets.width,
                       height: offsets.height,
+                      pixelRatio: window.devicePixelRatio,
                       from: 'mouseup'};
             chrome.runtime.sendMessage(msg, function(response) {
               document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection

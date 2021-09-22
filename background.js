@@ -5,7 +5,7 @@ function createScreenshot(callback) {
 chrome.contextMenus.create({
   title:"Pick an image on the current page to replace",
   contexts:["action"],
-  id: "ScreeScrubberPickImageMenu",
+  id: "ScreenScrubberPickImageMenu",
 });
 
 chrome.action.onClicked.addListener((tab) => {
@@ -16,7 +16,7 @@ chrome.action.onClicked.addListener((tab) => {
   });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab){
-  if (info.menuItemId == "ScreeScrubberPickImageMenu") {
+  if (info.menuItemId == "ScreenScrubberPickImageMenu") {
       chrome.scripting.executeScript({
         target: {tabId: tab.id},
         files: ["activatePicker.js"]
@@ -28,12 +28,15 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
    if (msg.from == 'mouseup') {
      createScreenshot(function (dataURL) {
       chrome.tabs.create({
-        url: chrome.runtime.getURL('pickedItemOptions.html') + 
+        url: chrome.runtime.getURL('options.html') + 
           '?top=' + msg.top + 
           '&left=' + msg.left + 
           '&height=' + msg.height + 
           '&width=' + msg.width  +
-          '&element=' + msg.element + 
+          '&imageElement=' + msg.element + 
+          '&imgwidth=' + msg.imgWidth +
+          '&imgHeight=' + msg.imgHeight + 
+          '&pixelRatio=' + msg.pixelRatio +
           '&screenImg=' + dataURL,
         active: false
         }, function(tab) {
