@@ -170,7 +170,6 @@ function ProcessImages()
             {
                 imageCanvas.src = imgSrc;
                 imageCanvas.width = Math.round(imageCanvas.width / r * (thumbnailSize / w));  
-                console.log(w, r, t, l);
                 imageCanvas.style = "margin: -" + Math.round(t * (thumbnailSize/w)) + "px 0 0 -" + Math.round(l * (thumbnailSize/w))+ "px;"; 
                 imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize/w * h + "px;border: 2px solid gray;overflow: hidden;";  
                 
