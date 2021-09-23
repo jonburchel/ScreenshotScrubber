@@ -77,6 +77,15 @@ function getImageStore(imageElement, callback) {
     });
 }
 
+function htmlEscape(str) {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
 function ProcessImages()
 {
 
@@ -143,7 +152,7 @@ function ProcessImages()
             ImgList.insertRow();
             ImgList.rows[ImgList.rows.length - 1].innerHTML = 
              "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div><td>" + 
-             "<td>"
+             "<td>" +  htmlEscape(ReplaceImgValues[i].imageElement) + "</td>"
             var imageCropDiv = document.getElementById("imageCropDiv_" + i);
             var imageCanvas = document.getElementById("imageCanvas_" + i);
             var t = ReplaceImgValues[i].t;
@@ -163,7 +172,7 @@ function ProcessImages()
                 imageCanvas.width = Math.round(imageCanvas.width / r * (thumbnailSize / w));  
                 console.log(w, r, t, l);
                 imageCanvas.style = "margin: -" + Math.round(t * (thumbnailSize/w)) + "px 0 0 -" + Math.round(l * (thumbnailSize/w))+ "px;"; 
-                imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize + "px;border: 2px solid gray;overflow: hidden;";  
+                imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize/w * h + "px;border: 2px solid gray;overflow: hidden;";  
                 
             }
         }
