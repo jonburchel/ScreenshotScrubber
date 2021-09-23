@@ -150,9 +150,10 @@ function ProcessImages()
         for (var i = 0; i < ReplaceImgValues.length; i++)
         {
             ImgList.insertRow();
+            const RemoveInlineSrcData = /src=.*\"/g;
             ImgList.rows[ImgList.rows.length - 1].innerHTML = 
              "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div><td>" + 
-             "<td>" +  htmlEscape(ReplaceImgValues[i].imageElement) + "</td>"
+             "<td style=\"font-size: x-small;\">" +  htmlEscape(ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data>\"")) + "</td>"
             var imageCropDiv = document.getElementById("imageCropDiv_" + i);
             var imageCanvas = document.getElementById("imageCanvas_" + i);
             var t = ReplaceImgValues[i].t;
