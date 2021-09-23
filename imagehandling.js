@@ -15,6 +15,10 @@ function getQueryVariable(variable) {
     }
 }
 
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 function updateImageStore(objectToStore) {
     var jsonstr = JSON.stringify(objectToStore);
     var i = 0;
@@ -146,14 +150,32 @@ function ProcessImages()
         }
 
         var ImgList = document.getElementById("ImageList");
-        ImgList.innerHTML = "";
+
         for (var i = 0; i < ReplaceImgValues.length; i++)
         {
-            ImgList.insertRow();
+            ImgList.insertRow(ImgList.rows.length - 1);
             const RemoveInlineSrcData = /src=.*\"/g;
-            ImgList.rows[ImgList.rows.length - 1].innerHTML = 
-             "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div><td>" + 
-             "<td style=\"font-size: x-small;\">" +  htmlEscape(ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data>\"")) + "</td>"
+            var scrubbedElement = ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data>\"");
+            const RemoveInlineSrcSetData = /srcset=.*\"/g;
+            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, ""));
+            const BoldClasses = new RegExp("(class)=&quot;(.*?)&quot;", "i");
+            scrubbedElement = scrubbedElement.replace(BoldClasses, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
+            const BoldSrc = new RegExp("(src)=&quot;((?!&lt;inline data&gt;).*?)&quot;", "i");
+            scrubbedElement = scrubbedElement.replace(BoldSrc, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
+            const BoldId = new RegExp("(id)=&quot;(.*?)&quot;", "i");
+            scrubbedElement = scrubbedElement.replace(BoldId, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
+            const BoldHref = new RegExp("(href)=&quot;(.*?)&quot;", "i");
+            scrubbedElement = scrubbedElement.replace(BoldHref, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
+            ImgList.rows[ImgList.rows.length - 2].innerHTML = 
+             "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div></td>" + 
+             "<td style=\"font-size: x-small;\">" +  scrubbedElement + "</td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchId" + i + "\" name=\"matchId" + i + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchClass" + i + "\" name=\"matchClass" + i + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchSrc" + i + "\" name=\"matchSrc" + i + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchHref" + i + "\" name=\"matchHref" + i + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + i + "\" name=\"scaleToOld" + i + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray\"><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\"></label></td>" +
+             "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"DeleteImg" + i + "\"></td>"
             var imageCropDiv = document.getElementById("imageCropDiv_" + i);
             var imageCanvas = document.getElementById("imageCanvas_" + i);
             var t = ReplaceImgValues[i].t;
