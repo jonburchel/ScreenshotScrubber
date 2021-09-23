@@ -10,9 +10,10 @@ document.addEventListener('mouseup', function(mousePos){
           elems[i].tagName.toLowerCase() == "svg")
       {
             var originalI = i;
-            console.log(elems[i].className, elems[i].id)
-            while(i <= elems.length && elems[i].id == "" && elems[i].className == "")
+            while(i <= elems.length && elems[i].id == "" && elems[i].className.animVal == "" && elems[i].className.baseVal == "")
+            {
               i++;
+            }
             if (i >= elems.length) { i = originalI; }
             elem = elems[i];
             var offsets = elem.getBoundingClientRect();
