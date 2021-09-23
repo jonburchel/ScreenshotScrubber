@@ -10,7 +10,7 @@ document.addEventListener('mouseup', function(mousePos){
           elems[i].tagName.toLowerCase() == "svg")
       {
             var originalI = i;
-            while(i <= elems.length && elems[i].id == "")
+            while(i <= elems.length && (elems[i].id == "" && elems[i].tagName.toLowerCase() == "img"))
               i++;
             if (i >= elems.length) { i = originalI; }
             elem = elems[i];

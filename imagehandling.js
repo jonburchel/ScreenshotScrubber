@@ -107,7 +107,7 @@ function ProcessImages()
                     break;
             }
             if (i == ReplaceImgValues.length && imageElement != undefined)
-                ReplaceImgValues.splice(ReplaceImgValues.length - 1, 0, imgDetails);
+                ReplaceImgValues.splice(ReplaceImgValues.length, 0, imgDetails);
         }
         else
         {
@@ -130,13 +130,20 @@ function ProcessImages()
         {
             window.location = chrome.runtime.getURL('options.html?imagesRendered=true');
         }
+        else
+        {
+            //removes display:none and sets bgcolor. this hides the refresh flash...
+            document.body.style = "background-color:cornflowerblue;"; 
+        }
 
         var ImgList = document.getElementById("ImageList");
         ImgList.innerHTML = "";
         for (var i = 0; i < ReplaceImgValues.length; i++)
         {
             ImgList.insertRow();
-            ImgList.rows[ImgList.rows.length - 1].innerHTML = "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div><td>"
+            ImgList.rows[ImgList.rows.length - 1].innerHTML = 
+             "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div><td>" + 
+             "<td>"
             var imageCropDiv = document.getElementById("imageCropDiv_" + i);
             var imageCanvas = document.getElementById("imageCanvas_" + i);
             var t = ReplaceImgValues[i].t;
@@ -148,13 +155,16 @@ function ProcessImages()
             var imgSrc = ReplaceImgValues[i].imgSrc;
             var useSrc = false;
             var replacementURL = "";
+            var thumbnailSize = 42;
             
             if (imgSrc != undefined) 
             {
                 imageCanvas.src = imgSrc;
-                imageCanvas.width = Math.round(imageCanvas.width / r);  
-                imageCanvas.style = "margin: -" + t + "px 0 0 -" + l + "px;"; 
-                imageCropDiv.style = "width: " + w + "px;height: " + h + "px;border: 2px solid red;overflow: hidden;";  
+                imageCanvas.width = Math.round(imageCanvas.width / r * (thumbnailSize / w));  
+                console.log(w, r, t, l);
+                imageCanvas.style = "margin: -" + Math.round(t * (thumbnailSize/w)) + "px 0 0 -" + Math.round(l * (thumbnailSize/w))+ "px;"; 
+                imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize + "px;border: 2px solid gray;overflow: hidden;";  
+                
             }
         }
 
