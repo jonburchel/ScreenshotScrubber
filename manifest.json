@@ -3,7 +3,7 @@
     "description": "This extension replaces values in web pages, to remove PII for screenshots.",
     "version": "1.0",
     "manifest_version": 3,
-    "permissions": ["storage", "activeTab", "scripting", "contextMenus", "tabs"],
+    "permissions": ["storage", "activeTab", "scripting", "contextMenus", "tabs", "unlimitedStorage"],
     "options_page": "options.html",
     "background": {
       "service_worker": "background.js"

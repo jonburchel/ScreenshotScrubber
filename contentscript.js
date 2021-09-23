@@ -22,6 +22,7 @@ document.addEventListener('mouseup', function(mousePos){
                       left: offsets.left,
                       width: offsets.width,
                       height: offsets.height,
+                      imgWidth: window.innerWidth,
                       pixelRatio: window.devicePixelRatio,
                       from: 'mouseup'};
             chrome.runtime.sendMessage(msg, function(response) {

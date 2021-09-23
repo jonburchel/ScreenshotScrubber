@@ -34,8 +34,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
           '&height=' + msg.height + 
           '&width=' + msg.width  +
           '&imageElement=' + msg.element + 
-          '&imgwidth=' + msg.imgWidth +
-          '&imgHeight=' + msg.imgHeight + 
+          '&imgWidth=' + msg.imgWidth +
           '&pixelRatio=' + msg.pixelRatio +
           '&screenImg=' + dataURL,
         active: false

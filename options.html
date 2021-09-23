@@ -8,7 +8,7 @@
             <img src="./images/DocScreenshotScrubberIcon128.png">
             <h1>Screenshot Scrubber Options</h1>
             <table>
-                <tr><td>Set text values to be replaced on the page and the new replacement values to the list below.</td></tr>
+                <tr><td>Specify text values to be replaced on the page, and their new replacement values, in the list below.</td></tr>
                 <tr><td>Initial suggested values are provided, but you can customize however you need.</td></tr>
                 <tr><td>To replace images, right click the extension icon while on a page to pick a source image, then provide its replacement.</td></tr>
                 <tr><td>To scrub a page for screenshots after configuration, just click the extension icon to replace text and images.</td></tr>
@@ -27,9 +27,11 @@
                 <tr>
                     <td></td><td></td><td></td><td><img id="AddRowButton" src="./images/plus.png"></td>
                 </tr>
-                <tr><td colspan=4><center><div id="SavedDiv" style="opacity: 0%;color:green;font:bold;font-size:x-large;">Saved</div></center></td></tr>
+                <tr><td colspan=4><center><div id="SavedDiv" style="opacity: 0%;color:rgb(220, 47, 255);font:bolder;font-size:xxx-large;position:absolute;top:60%;left:45%">Saved</div></center></td></tr>
             </table>
+            <table id="ImageList"/>
         </center>
+        <script src="imagehandling.js"></script>
         <script src="options.js"></script>
   </body>
 </html>
