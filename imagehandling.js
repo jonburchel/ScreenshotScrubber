@@ -92,30 +92,45 @@ function htmlEscape(str) {
 
 function BoldAttr(tags, attributeToBold, clearFirst=false)
 {
-    tags = tags.replaceAll("<b style=\"background-color: yellow;\">", "___BSTART___").replaceAll("</b>", "___BEND___").replaceAll("\"", "&quot;").replaceAll("___BSTART___", "<b style=\"background-color: yellow;\">").replaceAll("___BEND___", "</b>");
+    tags = tags.replaceAll("<b style=\"background-color: #9bc3f0;\">", "___BSTART___").replaceAll("</b>", "___BEND___").replaceAll("\"", "&quot;").replaceAll("___BSTART___", "<b style=\"background-color: #9bc3f0;\">").replaceAll("___BEND___", "</b>");
     if (clearFirst)
-        tags = tags.replaceAll("<b style=\"background-color: yellow;\">", "").replaceAll("</b>", "");
+        tags = tags.replaceAll("<b style=\"background-color: #9bc3f0;\">", "").replaceAll("</b>", "");
     var rx = null;
     if (attributeToBold == "src")
         rx = new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "i");
     else
         rx = new RegExp("(" + attributeToBold.toLowerCase() + ")\\s*=\\s*&quot;(.*?)&quot;", "i");
 
-    return tags.replace(rx, "<b style=\"background-color: yellow;\">$1</b>=&quot;<b style=\"background-color: yellow;\">$2</b>&quot;");
+    return tags.replace(rx, "<b style=\"background-color: #9bc3f0;\">$1</b>=&quot;<b style=\"background-color: #9bc3f0;\">$2</b>&quot;");
 } 
 
-function BoldTag()
+function BoldTag(rowNumOverride)
 {
-    var rx = new RegExp("[A-Za-z]*");
-    var r = this.id.replace(rx, '');
-    var s = document.getElementById("htmlTag" + r).innerHTML.replaceAll("<b style=\"background-color: yellow;\">", "").replaceAll("</b>", "");
-    if (document.getElementById("matchId" + r).checked)
+    var rx = new RegExp("([A-Za-z]*)", "g");
+    var r = "-1";
+    var id = this.id;
+
+    if (typeof rowNumOverride == "number")
+    {
+        r = rowNumOverride;
+    }
+    else
+    {
+        r = this.id.replace(rx, "");
+    }
+    console.log(r);
+
+
+        
+    
+    var s = document.getElementById("htmlTag" + r).innerHTML.replaceAll("<b style=\"background-color: #9bc3f0;\">", "").replaceAll("</b>", "");
+    if (document.getElementById("matchId" + r) != null && document.getElementById("matchId" + r).checked)
         s = BoldAttr(s, "id");
-    if (document.getElementById("matchClass" + r).checked)
+    if (document.getElementById("matchClass" + r) != null && document.getElementById("matchClass" + r).checked)
         s = BoldAttr(s, "class");
-    if (document.getElementById("matchSrc" + r).checked)
+    if (document.getElementById("matchSrc" + r) != null && document.getElementById("matchSrc" + r).checked)
         s = BoldAttr(s, "src");
-    if (document.getElementById("matchHref" + r).checked)
+    if (document.getElementById("matchHref" + r) != null && document.getElementById("matchHref" + r).checked)
         s = BoldAttr(s, "href");
    
     document.getElementById("htmlTag" + r).innerHTML = s;
@@ -135,7 +150,12 @@ function ProcessImages()
         var imgSrc = getQueryVariable("screenImg");
         var useSrc = false;
         var replacementURL = "";
-        imgDetails = {imageElement, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc};
+        var matchID = false;
+        var matchClass = false;
+        var matchHref = false;
+        var matchSrc = false;
+        var scaleToOld = true;
+        imgDetails = {imageElement, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc, scaleToOld};
     }
 
     getImageStore(imageElement, function(imageElement) { 
@@ -148,7 +168,13 @@ function ProcessImages()
                     break;
             }
             if (i == ReplaceImgValues.length && imageElement != undefined)
+            {
+                imgDetails.matchID = imgDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
+                if (!imgDetails.matchID) imgDetails.matchClass = imgDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
+                if (!imgDetails.matchID && !imgDetails.matchClass) imgDetails.matchSrc = imgDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "g")) != -1;
+                if (!imgDetails.matchID && !imgDetails.matchClass && !imgDetails.matchSrc) imgDetails.matchHref = imgDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
                 ReplaceImgValues.splice(ReplaceImgValues.length, 0, imgDetails);
+            }
         }
         else
         {
@@ -189,17 +215,30 @@ function ProcessImages()
             ImgList.rows[ImgList.rows.length - 2].innerHTML = 
              "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div></td>" + 
              "<td style=\"font-size: x-small;\" id=\"htmlTag" + i + "\">" +  scrubbedElement + "</td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchId" + i + "\" name=\"matchId" + i + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchClass" + i + "\" name=\"matchClass" + i + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchSrc" + i + "\" name=\"matchSrc" + i + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchHref" + i + "\" name=\"matchHref" + i + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray\">" +
+                (scrubbedElement.search(new RegExp("id\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchId" + i + "\" name=\"matchId" + i + "\"></center>") + "</td>" +
+             "<td style=\"border-left: 1px dashed gray\">" + 
+                (scrubbedElement.search(new RegExp("class\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchClass" + i + "\" name=\"matchClass" + i + "\"></center>") + "</td>" +
+             "<td style=\"border-left: 1px dashed gray\">" + 
+                (scrubbedElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchSrc" + i + "\" name=\"matchSrc" + i + "\"></center>") + "</td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center>" +
+                (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + i + "\" name=\"matchHref" + i + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + i + "\" name=\"scaleToOld" + i + "\"></center></td>" +
              "<td style=\"border-left: 1px dashed gray\"><center><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + i + "\"></label><center></td>" +
              "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"DeleteImg" + i + "\"></td>";
-            document.getElementById("matchId" + i).addEventListener("change", BoldTag);
-            document.getElementById("matchHref" + i).addEventListener("change", BoldTag);
-            document.getElementById("matchSrc" + i).addEventListener("change", BoldTag);
-            document.getElementById("matchClass" + i).addEventListener("change", BoldTag);
+            var id = document.getElementById("matchId" + i);
+            var href = document.getElementById("matchHref" + i);
+            var src = document.getElementById("matchSrc" + i);
+            var cls = document.getElementById("matchClass" + i);
+            if (id != null) id.addEventListener("change", BoldTag);
+            if (href != null) href.addEventListener("change", BoldTag);
+            if (src != null) src.addEventListener("change", BoldTag);
+            if (cls != null) cls.addEventListener("change", BoldTag);
+            if (id != null && ReplaceImgValues[i].matchID) id.checked = true;
+            if (src != null && ReplaceImgValues[i].matchSrc) src.checked = true;
+            if (href != null && ReplaceImgValues[i].matchHref) href.checked = true;
+            if (cls != null && ReplaceImgValues[i].matchClass) cls.checked = true;
+            BoldTag(i);
             var imageCropDiv = document.getElementById("imageCropDiv_" + i);
             var imageCanvas = document.getElementById("imageCanvas_" + i);
             var t = ReplaceImgValues[i].t;
