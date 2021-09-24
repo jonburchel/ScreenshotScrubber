@@ -40,18 +40,18 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
     AddRowButton.hidden = false;    
 });
 
-function CreateGUID() 
+function CreateUniqueID(numDigits = 6) 
 {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+    var s = "";
+    for (var i = 0; i < numDigits; i++)
+        s += Math.round(Math.random() * 9.5 - .5);
+    return s;
 }
 
 function AddRow()
 {
     var row = SettingsList.insertRow(SettingsList.rows.length - 2);
-    var id = CreateGUID();
+    var id = CreateUniqueID();
     row.id = "Row" + id;
     var cell0 = row.insertCell(0);
     var cell1 = row.insertCell(1);
@@ -62,8 +62,6 @@ function AddRow()
     cell3.innerHTML="<img valign=bottom src=\"./images/minus.png\" id=\"Delete" + id + "\">";
     cell1.addEventListener("input", function(e) { DataChanged(e); });
     cell2.addEventListener("input", function(e) { DataChanged(e); });
-    //document.getElementById("Original" + id).addEventListener("focusout", StoreConfigValues);
-    //document.getElementById("New" + id).addEventListener("focusout", StoreConfigValues);
     let DeleteRowButton = document.getElementById("Delete" + id);
     DeleteRowButton.addEventListener("click", function(e) { DeleteRow(e); });
     AddRowButton.hidden = true;
@@ -73,15 +71,8 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function StoreConfigValues()
+async function FlashSaved()
 {
-    AddRowButton.hidden = false;
-    var ReplaceValues = new Array(SettingsList.rows.length - 3);
-    for (var i = 0; i < ReplaceValues.length; i++)
-    {
-        ReplaceValues[i] = [SettingsList.rows[i + 1].cells[1].children[0].value, SettingsList.rows[i + 1].cells[2].children[0].value];
-    }
-    chrome.storage.sync.set({ConfigArray: ReplaceValues});
     var SavedDiv = document.getElementById("SavedDiv");
     SavedDiv.style.opacity = "100%";
     await sleep(250);
@@ -90,6 +81,18 @@ async function StoreConfigValues()
         SavedDiv.style.opacity = (i / 100);
         await sleep(1);
     }
+}
+
+function StoreConfigValues()
+{
+    AddRowButton.hidden = false;
+    var ReplaceValues = new Array(SettingsList.rows.length - 3);
+    for (var i = 0; i < ReplaceValues.length; i++)
+    {
+        ReplaceValues[i] = [SettingsList.rows[i + 1].cells[1].children[0].value, SettingsList.rows[i + 1].cells[2].children[0].value];
+    }
+    chrome.storage.sync.set({ConfigArray: ReplaceValues});
+    FlashSaved();
 }
 
 function DataChanged(e)

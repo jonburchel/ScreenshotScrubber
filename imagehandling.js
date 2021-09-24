@@ -1,6 +1,7 @@
 var ImgData = new Array();
 var ReplaceImgValues = new Array();
 var imgDetails = {};
+var ImgList = null;
 
 document.body.addEventListener("load", ProcessImages());
 
@@ -97,45 +98,68 @@ function BoldAttr(tags, attributeToBold, clearFirst=false)
         tags = tags.replaceAll("<b style=\"background-color: #9bc3f0;\">", "").replaceAll("</b>", "");
     var rx = null;
     if (attributeToBold == "src")
-        rx = new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "i");
+        rx = new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "i");
     else
         rx = new RegExp("(" + attributeToBold.toLowerCase() + ")\\s*=\\s*&quot;(.*?)&quot;", "i");
 
     return tags.replace(rx, "<b style=\"background-color: #9bc3f0;\">$1</b>=&quot;<b style=\"background-color: #9bc3f0;\">$2</b>&quot;");
 } 
 
-function BoldTag(rowNumOverride)
+function BoldTag(e)
 {
     var rx = new RegExp("([A-Za-z]*)", "g");
     var r = "-1";
-    var id = this.id;
-
-    if (typeof rowNumOverride == "number")
-    {
-        r = rowNumOverride;
-    }
+    if (typeof e == "string")
+        r = e;
     else
-    {
         r = this.id.replace(rx, "");
-    }
-    console.log(r);
 
-
-        
-    
     var s = document.getElementById("htmlTag" + r).innerHTML.replaceAll("<b style=\"background-color: #9bc3f0;\">", "").replaceAll("</b>", "");
-    if (document.getElementById("matchId" + r) != null && document.getElementById("matchId" + r).checked)
-        s = BoldAttr(s, "id");
-    if (document.getElementById("matchClass" + r) != null && document.getElementById("matchClass" + r).checked)
-        s = BoldAttr(s, "class");
-    if (document.getElementById("matchSrc" + r) != null && document.getElementById("matchSrc" + r).checked)
-        s = BoldAttr(s, "src");
-    if (document.getElementById("matchHref" + r) != null && document.getElementById("matchHref" + r).checked)
-        s = BoldAttr(s, "href");
-   
+    var id = document.getElementById("matchId" + r);
+    var href = document.getElementById("matchHref" + r);
+    var src = document.getElementById("matchSrc" + r);
+    var cls = document.getElementById("matchClass" + r);
+    if (id != null && id.checked) s = BoldAttr(s, "id");
+    if (cls != null && cls.checked) s = BoldAttr(s, "class");
+    if (src != null && src.checked) s = BoldAttr(s, "src");
+    if (href != null && href.checked) s = BoldAttr(s, "href"); 
     document.getElementById("htmlTag" + r).innerHTML = s;
+    
+    if (id != null) ReplaceImgValues.find(i=>i.imgId == r).matchID = id.checked;
+    if (href != null) ReplaceImgValues.find(i=>i.imgId == r).matchHref = href.checked;
+    if (src != null) ReplaceImgValues.find(i=>i.imgId == r).matchSrc = src.checked;
+    if (cls != null) ReplaceImgValues.find(i=>i.imgId == r).matchClass = cls.checked;
+    updateImageStore(ReplaceImgValues);
+    if (!PageLoading) FlashSaved();
 }
 
+function ScaleChange(e)
+{
+    var rx = new RegExp("[A-Za-z]*", "g");
+    var r = this.id.replace(rx, "");
+    ReplaceImgValues.find(i=>i.imgId == r).scaleToOld = this.checked;
+    updateImageStore(ReplaceImgValues);
+    if (!PageLoading) FlashSaved();
+}
+
+function DelImg(e)
+{
+    var rx = new RegExp("[A-Za-z]*", "g");
+    var r = parseInt(this.id.replace(rx, ""));
+    ImgList.deleteRow(ReplaceImgValues.findIndex(i=>i.imgId == r) + 2);
+    ReplaceImgValues.splice(ReplaceImgValues.findIndex(i=>i.imgId == r), 1);
+    updateImageStore(ReplaceImgValues);
+    FlashSaved();
+}
+function CreateUniqueID(numDigits = 6) 
+{
+    var s = "";
+    for (var i = 0; i < numDigits; i++)
+        s += Math.round(Math.random() * 9.5 - .5).toString();
+    return s;
+}
+
+var PageLoading = true;
 function ProcessImages()
 {
     var imageElement = getQueryVariable("imageElement");
@@ -155,7 +179,8 @@ function ProcessImages()
         var matchHref = false;
         var matchSrc = false;
         var scaleToOld = true;
-        imgDetails = {imageElement, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc, scaleToOld};
+        var imgId = CreateUniqueID();
+        imgDetails = {imgId, imageElement, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc, scaleToOld};
     }
 
     getImageStore(imageElement, function(imageElement) { 
@@ -171,7 +196,7 @@ function ProcessImages()
             {
                 imgDetails.matchID = imgDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
                 if (!imgDetails.matchID) imgDetails.matchClass = imgDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
-                if (!imgDetails.matchID && !imgDetails.matchClass) imgDetails.matchSrc = imgDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "g")) != -1;
+                if (!imgDetails.matchID && !imgDetails.matchClass) imgDetails.matchSrc = imgDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) != -1;
                 if (!imgDetails.matchID && !imgDetails.matchClass && !imgDetails.matchSrc) imgDetails.matchHref = imgDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
                 ReplaceImgValues.splice(ReplaceImgValues.length, 0, imgDetails);
             }
@@ -203,44 +228,49 @@ function ProcessImages()
             document.body.style = "background-color:cornflowerblue;"; 
         }
 
-        var ImgList = document.getElementById("ImageList");
+        ImgList = document.getElementById("ImageList");
 
         for (var i = 0; i < ReplaceImgValues.length; i++)
         {
+            var imgId = ReplaceImgValues[i].imgId;
             ImgList.insertRow(ImgList.rows.length - 1);
             const RemoveInlineSrcData = /src=.*\"/g;
-            var scrubbedElement = ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data>\"");
+            var scrubbedElement = ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"");
             const RemoveInlineSrcSetData = /srcset=.*\"/g;
-            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data&gt;", "<i>&lt;inline data&gt;</i>");
+            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
             ImgList.rows[ImgList.rows.length - 2].innerHTML = 
-             "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div></td>" + 
-             "<td style=\"font-size: x-small;\" id=\"htmlTag" + i + "\">" +  scrubbedElement + "</td>" +
+             "<td><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
+             "<td style=\"font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" +
-                (scrubbedElement.search(new RegExp("id\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchId" + i + "\" name=\"matchId" + i + "\"></center>") + "</td>" +
+                (scrubbedElement.search(new RegExp("id\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchId" + imgId + "\" name=\"matchId" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" + 
-                (scrubbedElement.search(new RegExp("class\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchClass" + i + "\" name=\"matchClass" + i + "\"></center>") + "</td>" +
+                (scrubbedElement.search(new RegExp("class\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchClass" + imgId + "\" name=\"matchClass" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" + 
-                (scrubbedElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchSrc" + i + "\" name=\"matchSrc" + i + "\"></center>") + "</td>" +
+                (scrubbedElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchSrc" + imgId + "\" name=\"matchSrc" + i + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\"><center>" +
-                (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + i + "\" name=\"matchHref" + i + "\"></center>") + "</td>" +
-             "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + i + "\" name=\"scaleToOld" + i + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + i + "\"></label><center></td>" +
-             "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"DeleteImg" + i + "\"></td>";
-            var id = document.getElementById("matchId" + i);
-            var href = document.getElementById("matchHref" + i);
-            var src = document.getElementById("matchSrc" + i);
-            var cls = document.getElementById("matchClass" + i);
+                (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + imgId + "\" name=\"matchHref" + imgId + "\"></center>") + "</td>" +
+             "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + imgId + "\" name=\"scaleToOld" + imgId + "\"></center></td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label><center></td>" +
+             "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"deleteImg" + imgId + "\"></td>";
+            var id = document.getElementById("matchId" + imgId);
+            var href = document.getElementById("matchHref" + imgId);
+            var src = document.getElementById("matchSrc" + imgId);
+            var cls = document.getElementById("matchClass" + imgId);
+            var scale = document.getElementById("scaleToOld" + imgId);
+            var del = document.getElementById("deleteImg" + imgId);
             if (id != null) id.addEventListener("change", BoldTag);
             if (href != null) href.addEventListener("change", BoldTag);
             if (src != null) src.addEventListener("change", BoldTag);
             if (cls != null) cls.addEventListener("change", BoldTag);
+            scale.addEventListener("change", ScaleChange); 
+            del.addEventListener("click", DelImg);
             if (id != null && ReplaceImgValues[i].matchID) id.checked = true;
             if (src != null && ReplaceImgValues[i].matchSrc) src.checked = true;
             if (href != null && ReplaceImgValues[i].matchHref) href.checked = true;
             if (cls != null && ReplaceImgValues[i].matchClass) cls.checked = true;
-            BoldTag(i);
-            var imageCropDiv = document.getElementById("imageCropDiv_" + i);
-            var imageCanvas = document.getElementById("imageCanvas_" + i);
+            BoldTag(imgId);
+            var imageCropDiv = document.getElementById("imageCropDiv_" + imgId);
+            var imageCanvas = document.getElementById("imageCanvas_" + imgId);
             var t = ReplaceImgValues[i].t;
             var l = ReplaceImgValues[i].l;
             var w = ReplaceImgValues[i].w;
@@ -261,6 +291,6 @@ function ProcessImages()
                 
             }
         }
-
+        PageLoading = false;
     });
 }
