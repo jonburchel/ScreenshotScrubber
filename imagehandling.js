@@ -90,10 +90,39 @@ function htmlEscape(str) {
         .replace(/>/g, '&gt;');
 }
 
+function BoldAttr(tags, attributeToBold, clearFirst=false)
+{
+    tags = tags.replaceAll("<b style=\"background-color: yellow;\">", "___BSTART___").replaceAll("</b>", "___BEND___").replaceAll("\"", "&quot;").replaceAll("___BSTART___", "<b style=\"background-color: yellow;\">").replaceAll("___BEND___", "</b>");
+    if (clearFirst)
+        tags = tags.replaceAll("<b style=\"background-color: yellow;\">", "").replaceAll("</b>", "");
+    var rx = null;
+    if (attributeToBold == "src")
+        rx = new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data&gt;</i>).*?)&quot;", "i");
+    else
+        rx = new RegExp("(" + attributeToBold.toLowerCase() + ")\\s*=\\s*&quot;(.*?)&quot;", "i");
+
+    return tags.replace(rx, "<b style=\"background-color: yellow;\">$1</b>=&quot;<b style=\"background-color: yellow;\">$2</b>&quot;");
+} 
+
+function BoldTag()
+{
+    var rx = new RegExp("[A-Za-z]*");
+    var r = this.id.replace(rx, '');
+    var s = document.getElementById("htmlTag" + r).innerHTML.replaceAll("<b style=\"background-color: yellow;\">", "").replaceAll("</b>", "");
+    if (document.getElementById("matchId" + r).checked)
+        s = BoldAttr(s, "id");
+    if (document.getElementById("matchClass" + r).checked)
+        s = BoldAttr(s, "class");
+    if (document.getElementById("matchSrc" + r).checked)
+        s = BoldAttr(s, "src");
+    if (document.getElementById("matchHref" + r).checked)
+        s = BoldAttr(s, "href");
+   
+    document.getElementById("htmlTag" + r).innerHTML = s;
+}
+
 function ProcessImages()
 {
-
-
     var imageElement = getQueryVariable("imageElement");
     if (imageElement != undefined)
     {
@@ -108,7 +137,6 @@ function ProcessImages()
         var replacementURL = "";
         imgDetails = {imageElement, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc};
     }
-
 
     getImageStore(imageElement, function(imageElement) { 
         if (ImgData!= "")
@@ -157,25 +185,21 @@ function ProcessImages()
             const RemoveInlineSrcData = /src=.*\"/g;
             var scrubbedElement = ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data>\"");
             const RemoveInlineSrcSetData = /srcset=.*\"/g;
-            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, ""));
-            const BoldClasses = new RegExp("(class)=&quot;(.*?)&quot;", "i");
-            scrubbedElement = scrubbedElement.replace(BoldClasses, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
-            const BoldSrc = new RegExp("(src)=&quot;((?!&lt;inline data&gt;).*?)&quot;", "i");
-            scrubbedElement = scrubbedElement.replace(BoldSrc, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
-            const BoldId = new RegExp("(id)=&quot;(.*?)&quot;", "i");
-            scrubbedElement = scrubbedElement.replace(BoldId, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
-            const BoldHref = new RegExp("(href)=&quot;(.*?)&quot;", "i");
-            scrubbedElement = scrubbedElement.replace(BoldHref, "<b>$1</b>=" + htmlEscape("\"") + "<b>$2</b>" + htmlEscape("\""));
+            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data&gt;", "<i>&lt;inline data&gt;</i>");
             ImgList.rows[ImgList.rows.length - 2].innerHTML = 
              "<td><div id=\"imageCropDiv_" + i + "\"><img id=\"imageCanvas_" + i + "\"></img></div></td>" + 
-             "<td style=\"font-size: x-small;\">" +  scrubbedElement + "</td>" +
+             "<td style=\"font-size: x-small;\" id=\"htmlTag" + i + "\">" +  scrubbedElement + "</td>" +
              "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchId" + i + "\" name=\"matchId" + i + "\"></center></td>" +
              "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchClass" + i + "\" name=\"matchClass" + i + "\"></center></td>" +
              "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchSrc" + i + "\" name=\"matchSrc" + i + "\"></center></td>" +
              "<td style=\"border-left: 1px dashed gray\"><center><input type=\"checkbox\" id=\"matchHref" + i + "\" name=\"matchHref" + i + "\"></center></td>" +
              "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + i + "\" name=\"scaleToOld" + i + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\"></label></td>" +
-             "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"DeleteImg" + i + "\"></td>"
+             "<td style=\"border-left: 1px dashed gray\"><center><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + i + "\"></label><center></td>" +
+             "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"DeleteImg" + i + "\"></td>";
+            document.getElementById("matchId" + i).addEventListener("change", BoldTag);
+            document.getElementById("matchHref" + i).addEventListener("change", BoldTag);
+            document.getElementById("matchSrc" + i).addEventListener("change", BoldTag);
+            document.getElementById("matchClass" + i).addEventListener("change", BoldTag);
             var imageCropDiv = document.getElementById("imageCropDiv_" + i);
             var imageCanvas = document.getElementById("imageCanvas_" + i);
             var t = ReplaceImgValues[i].t;
@@ -201,12 +225,3 @@ function ProcessImages()
 
     });
 }
-
-
-
-// document.getElementById("element").innerText = getQueryVariable("element");
-// var img = document.getElementById("imageCanvas");
-// img.src = 
-// img.width = img.width / r;
-// img.style = "margin: -" + ( t) + "px 0 0 -" + (l) + "px;";
-// document.getElementById("imageCropDiv").style = "width: " + (w) + "px; height: " + (h) + "px; border:2px solid red;overflow: hidden;";
