@@ -2,6 +2,8 @@ var ImgData = new Array();
 var ReplaceImgValues = new Array();
 var imgDetails = {};
 var ImgList = null;
+var PageLoading = true;
+var thumbnailSize = 42;
 
 document.body.addEventListener("load", ProcessImages());
 
@@ -159,7 +161,7 @@ function CreateUniqueID(numDigits = 6)
     return s;
 }
 
-var PageLoading = true;
+
 function ProcessImages()
 {
     var imageElement = getQueryVariable("imageElement");
@@ -250,7 +252,31 @@ function ProcessImages()
              "<td style=\"border-left: 1px dashed gray\"><center>" +
                 (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + imgId + "\" name=\"matchHref" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + imgId + "\" name=\"scaleToOld" + imgId + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center><label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label><center></td>" +
+             "<td style=\"border-left: 1px dashed gray\"><center>" +
+//                "<label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label>" +
+                "<div class=\"dropdown\">\
+                    <center><button class=\"dropbtn\" style=\"width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;\";>\
+                    Remove image.  Do not replace.</button></center>\
+                    <div class=\"dropdown-content\">\
+                        <table style=\"padding: 0px;\ class=\"dropTable\">\
+                            <tr>\
+                                <td style=\"border-top: 0px;\">\
+                                    <button class=\"dropimg\" style=\"opacity: 100%;width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;\">\
+                                    Remove image. Do not replace.</button>\
+                                </td>\
+                                <td style=\"border-top: 0px;\">\
+                                    <button class=\"dropimg\" style=\"background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;background-repeat: no-repeat; background-position: center; background-size: contain;\">\
+                                </td>\
+                                <td style=\"border-top: 0px;\">\
+                                    <button class=\"dropimg\" style=\"color: white;width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;\">\
+                                    Browse for a new image.\
+                                    </button>\
+                                </td>\
+                            </tr>\
+                        </table>\
+                    </div>\
+                </div>" +
+                "<center></td>" +
              "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"deleteImg" + imgId + "\"></td>";
             var id = document.getElementById("matchId" + imgId);
             var href = document.getElementById("matchHref" + imgId);
@@ -280,14 +306,13 @@ function ProcessImages()
             var imgSrc = ReplaceImgValues[i].imgSrc;
             var useSrc = false;
             var replacementURL = "";
-            var thumbnailSize = 42;
-            
+                       
             if (imgSrc != undefined) 
             {
                 imageCanvas.src = imgSrc;
                 imageCanvas.width = Math.round(imageCanvas.width / r * (thumbnailSize / w));  
                 imageCanvas.style = "margin: -" + Math.round(t * (thumbnailSize/w)) + "px 0 0 -" + Math.round(l * (thumbnailSize/w))+ "px;"; 
-                imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize/w * h + "px;border: 2px solid gray;overflow: hidden;";  
+                imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize/w * h + "px;border: 2px solid gray;border-radius: 3px;overflow: hidden;";  
                 
             }
         }
