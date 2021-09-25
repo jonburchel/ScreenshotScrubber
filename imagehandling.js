@@ -1,13 +1,14 @@
-var ImgData = new Array();
-var ReplaceImgValues = new Array();
-var imgDetails = {};
-var ImgList = null;
+var ImageArrayJson = new Array();
+var ImagesToReplace = new Array();
+var ReplacementImages = new Array();
+var PickedImageDetails = {};
+var ImgTable = null;
 var PageLoading = true;
-var thumbnailSize = 42;
+var ThumbnailSize = 42;
 
 document.body.addEventListener("load", ProcessImages());
 
-function getQueryVariable(variable) {
+function GetQueryVariable(variable) {
     var query = window.location.search.substring(1);
     var vars = query.split('&');
     for (var i = 0; i < vars.length; i++) {
@@ -22,11 +23,10 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-function updateImageStore(objectToStore) {
+function UpdateImageStore(objectToStore, key) {
     var jsonstr = JSON.stringify(objectToStore);
     var i = 0;
     var storageObj = {};
-    var key = "ImageStore";
 
     // split jsonstr into chunks and store them in an object indexed by `key_i`
     while(jsonstr.length > 0) {
@@ -57,28 +57,29 @@ function updateImageStore(objectToStore) {
         jsonstr = jsonstr.substr(valueLength);
     }
     
-    chrome.storage.local.set({ImageStoreLength: i});
+    chrome.storage.local.set({[key + "Length"]: i});
 }
 
-function readStorageSynchronous (key) {
+function ReadImageStorageSynchronous (key) {
     return new Promise((resolve) => {
         chrome.storage.local.get(key, function (result) {    
             if (result[key] === undefined) {
                 resolve(undefined);
               } else {
-                ImgData += result[key];
+                ImageArrayJson += result[key];
                 resolve(result[key]);
               }
         });
     });
 }
 
-function getImageStore(imageElement, callback) {
-    chrome.storage.local.get("ImageStoreLength", async function (StoreLen){
-        for (var StoreItem = 0; StoreItem < StoreLen.ImageStoreLength; StoreItem++)
+function GetImagesFromStorage(imageElement, keyBase, callback) {
+    chrome.storage.local.get(keyBase + "Length", async function (StoreLen){
+        for (var StoreItem = 0; StoreItem < StoreLen.ImagesToReplaceLength; StoreItem++)
         {
-            var key = "ImageStore_" + StoreItem.toString();
-            await readStorageSynchronous(key);
+            var key = keyBase + "_" + StoreItem.toString();
+            console.log(key);
+            await ReadImageStorageSynchronous(key);
         }
         callback(imageElement);
     });
@@ -127,11 +128,11 @@ function BoldTag(e)
     if (href != null && href.checked) s = BoldAttr(s, "href"); 
     document.getElementById("htmlTag" + r).innerHTML = s;
     
-    if (id != null) ReplaceImgValues.find(i=>i.imgId == r).matchID = id.checked;
-    if (href != null) ReplaceImgValues.find(i=>i.imgId == r).matchHref = href.checked;
-    if (src != null) ReplaceImgValues.find(i=>i.imgId == r).matchSrc = src.checked;
-    if (cls != null) ReplaceImgValues.find(i=>i.imgId == r).matchClass = cls.checked;
-    updateImageStore(ReplaceImgValues);
+    if (id != null) ImagesToReplace.find(i=>i.imgId == r).matchID = id.checked;
+    if (href != null) ImagesToReplace.find(i=>i.imgId == r).matchHref = href.checked;
+    if (src != null) ImagesToReplace.find(i=>i.imgId == r).matchSrc = src.checked;
+    if (cls != null) ImagesToReplace.find(i=>i.imgId == r).matchClass = cls.checked;
+    UpdateImageStore(ImagesToReplace, "ImagesToReplace");
     if (!PageLoading) FlashSaved();
 }
 
@@ -139,8 +140,8 @@ function ScaleChange(e)
 {
     var rx = new RegExp("[A-Za-z]*", "g");
     var r = this.id.replace(rx, "");
-    ReplaceImgValues.find(i=>i.imgId == r).scaleToOld = this.checked;
-    updateImageStore(ReplaceImgValues);
+    ImagesToReplace.find(i=>i.imgId == r).scaleToOld = this.checked;
+    UpdateImageStore(ImagesToReplace, "ImagesToReplace");
     if (!PageLoading) FlashSaved();
 }
 
@@ -148,9 +149,9 @@ function DelImg(e)
 {
     var rx = new RegExp("[A-Za-z]*", "g");
     var r = parseInt(this.id.replace(rx, ""));
-    ImgList.deleteRow(ReplaceImgValues.findIndex(i=>i.imgId == r) + 2);
-    ReplaceImgValues.splice(ReplaceImgValues.findIndex(i=>i.imgId == r), 1);
-    updateImageStore(ReplaceImgValues);
+    ImgTable.deleteRow(ImagesToReplace.findIndex(i=>i.imgId == r) + 2);
+    ImagesToReplace.splice(ImagesToReplace.findIndex(i=>i.imgId == r), 1);
+    UpdateImageStore(ImagesToReplace, "ImagesToReplace");
     FlashSaved();
 }
 function CreateUniqueID(numDigits = 6) 
@@ -161,23 +162,38 @@ function CreateUniqueID(numDigits = 6)
     return s;
 }
 
+
 function ImageSelected(e)
 {
-    console.log(e);
+    var file = e.srcElement.files[0];
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      console.log('RESULT', reader.result)
+    }
+    console.log(reader.readAsDataURL(file));
+    
+}
+
+function UpdateDefaultMatchSelections()
+{
+    PickedImageDetails.matchID = PickedImageDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
+    if (!PickedImageDetails.matchID) PickedImageDetails.matchClass = PickedImageDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
+    if (!PickedImageDetails.matchID && !PickedImageDetails.matchClass) PickedImageDetails.matchSrc = PickedImageDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) != -1;
+    if (!PickedImageDetails.matchID && !PickedImageDetails.matchClass && !PickedImageDetails.matchSrc) PickedImageDetails.matchHref = PickedImageDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
 }
 
 function ProcessImages()
 {
-    var imageElement = getQueryVariable("imageElement");
-    if (imageElement != undefined)
+    var PickedElementToReplace = GetQueryVariable("imageElement");
+    if (PickedElementToReplace != undefined)
     {
-        var t = Math.round(getQueryVariable("top"), 0);
-        var l = Math.round(getQueryVariable("left"), 0);
-        var w = Math.round(getQueryVariable("width"), 0);
-        var h = Math.round(getQueryVariable("height"), 0);
-        var r = getQueryVariable("pixelRatio");
-        var iw = getQueryVariable("imgWidth");
-        var imgSrc = getQueryVariable("screenImg");
+        var t = Math.round(GetQueryVariable("top"), 0);
+        var l = Math.round(GetQueryVariable("left"), 0);
+        var w = Math.round(GetQueryVariable("width"), 0);
+        var h = Math.round(GetQueryVariable("height"), 0);
+        var r = GetQueryVariable("pixelRatio");
+        var iw = GetQueryVariable("imgWidth");
+        var imgSrc = GetQueryVariable("screenImg");
         var useSrc = false;
         var replacementURL = "";
         var matchID = false;
@@ -186,45 +202,47 @@ function ProcessImages()
         var matchSrc = false;
         var scaleToOld = true;
         var imgId = CreateUniqueID();
-        imgDetails = {imgId, imageElement, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc, scaleToOld};
+        PickedImageDetails = {imgId, imageElement: PickedElementToReplace, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc, scaleToOld};
     }
 
-    getImageStore(imageElement, function(imageElement) { 
-        if (ImgData!= "")
+    GetImagesFromStorage(PickedElementToReplace, "ImagesToReplace", function(imageElement) { 
+        if (ImageArrayJson!= "")
         {
-            ReplaceImgValues = JSON.parse(ImgData);
-            for (var i = 0; i < ReplaceImgValues.length; i++)
+            ImagesToReplace = JSON.parse(ImageArrayJson);
+            for (var i = 0; i < ImagesToReplace.length; i++)
             {
-                if (ReplaceImgValues[i]["imageElement"] == imageElement)
+                if (ImagesToReplace[i]["imageElement"] == imageElement)
                     break;
             }
-            if (i == ReplaceImgValues.length && imageElement != undefined)
+            if (i == ImagesToReplace.length && imageElement != undefined)
             {
-                imgDetails.matchID = imgDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
-                if (!imgDetails.matchID) imgDetails.matchClass = imgDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
-                if (!imgDetails.matchID && !imgDetails.matchClass) imgDetails.matchSrc = imgDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) != -1;
-                if (!imgDetails.matchID && !imgDetails.matchClass && !imgDetails.matchSrc) imgDetails.matchHref = imgDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
-                ReplaceImgValues.splice(ReplaceImgValues.length, 0, imgDetails);
+                UpdateDefaultMatchSelections();
+                ImagesToReplace.splice(ImagesToReplace.length, 0, PickedImageDetails);
             }
         }
         else
         {
             if (imageElement == undefined)
             {
-                // only happens the first time the tool options are accessed if no image was picked and none exist already, providing a default
-                imgDetails = {
-                    "imageElement": "<img class=\"fxs-avatarmenu-tenant-image\">",
-                    "useSrc": false,
-                    "replacementURL": "https://portal.azure.com/Content/static/MsPortalImpl/AvatarMenu/AvatarMenu_defaultAvatarSmall.png"
-                };
+                // // only happens the first time the tool options are accessed if no image was picked and none exist already, providing a default
+                // PickedImageDetails = {
+                //     "imageElement": "<img class=\"fxs-avatarmenu-tenant-image\">",
+                //     "useSrc": false,
+                //     "replacementURL": "https://portal.azure.com/Content/static/MsPortalImpl/AvatarMenu/AvatarMenu_defaultAvatarSmall.png"
+                // };
             }
-            ReplaceImgValues = new Array(imgDetails);
+            else
+            {
+                UpdateDefaultMatchSelections();
+                ImagesToReplace = new Array(PickedImageDetails);
+                console.log(ImagesToReplace);
+            }
         }
-        updateImageStore(ReplaceImgValues);
+        UpdateImageStore(ImagesToReplace, "ImagesToReplace");
         
         // ugly, but there is a weird behavior where the first time one of the images is loaded, it does not appear.  
         // refreshing the page consistently after a new images has been added allows rendering then...
-        if (getQueryVariable("imagesRendered") == undefined)
+        if (GetQueryVariable("imagesRendered") == undefined)
         {
             window.location = chrome.runtime.getURL('options.html?imagesRendered=true');
         }
@@ -234,17 +252,17 @@ function ProcessImages()
             document.body.style = "background-color:cornflowerblue;"; 
         }
 
-        ImgList = document.getElementById("ImageList");
+        ImgTable = document.getElementById("ImageList");
 
-        for (var i = 0; i < ReplaceImgValues.length; i++)
+        for (var i = 0; i < ImagesToReplace.length; i++)
         {
-            var imgId = ReplaceImgValues[i].imgId;
-            ImgList.insertRow(ImgList.rows.length - 1);
+            var imgId = ImagesToReplace[i].imgId;
+            ImgTable.insertRow(ImgTable.rows.length - 1);
             const RemoveInlineSrcData = /src=.*\"/g;
-            var scrubbedElement = ReplaceImgValues[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"");
+            var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"");
             const RemoveInlineSrcSetData = /srcset=.*\"/g;
             scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
-            ImgList.rows[ImgList.rows.length - 2].innerHTML = 
+            ImgTable.rows[ImgTable.rows.length - 2].innerHTML = 
              "<td><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
              "<td style=\"font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" +
@@ -259,21 +277,21 @@ function ProcessImages()
              "<td style=\"border-left: 1px dashed gray\"><center>" +
 //                "<label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label>" +
                 "<div class=\"dropdown\">\
-                    <center><button class=\"dropbtn\" style=\"width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;\";>\
+                    <center><button class=\"dropbtn\" style=\"width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\";>\
                     <b>REMOVE IMAGE</b></button></center>\
                     <div class=\"dropdown-content\" style=\"background-color: #9bc3f0;\">\
                         <table style=\"padding: 1px;\" class=\"dropTable\">\
                             <tr>\
                                 <td style=\"border-top: 0px;padding: 1px;\">\
-                                    <button class=\"dropimg\" style=\"opacity: 100%;width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;\">\
+                                    <button class=\"dropimg\" style=\"opacity: 100%;width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\">\
                                     <b>REMOVE IMAGE</b></button>\
                                 </td>\
                                 <td style=\"border-top: 0px;padding: 1px;\">\
-                                    <button class=\"dropimg\" style=\"background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;background-repeat: no-repeat; background-position: center; background-size: contain;\">\
+                                    <button class=\"dropimg\" style=\"background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;background-repeat: no-repeat; background-position: center; background-size: contain;\">\
                                 </td>\
                                 <td style=\"border-top: 0px;padding: 1px;\">\
-                                    <button class=\"dropimg\" style=\"color: white;width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;\" id=\"btnBrowse" + imgId + "\">\
-                                    <b style='font-size:large'><input style='display:none;' type=\"file\" id=\"browseDialog" + imgId + "\"/>...</b>\
+                                    <button class=\"dropimg\" style=\"color: white;width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\" id=\"btnBrowse" + imgId + "\">\
+                                    <b style='font-size:large'><input style='display:none;' accept='image/*' type=\"file\" id=\"browseDialog" + imgId + "\"/>...</b>\
                                     </button>\
                                 </td>\
                             </tr>\
@@ -298,29 +316,29 @@ function ProcessImages()
             browseInput.addEventListener("change", ImageSelected);
             scale.addEventListener("change", ScaleChange); 
             del.addEventListener("click", DelImg);
-            if (id != null && ReplaceImgValues[i].matchID) id.checked = true;
-            if (src != null && ReplaceImgValues[i].matchSrc) src.checked = true;
-            if (href != null && ReplaceImgValues[i].matchHref) href.checked = true;
-            if (cls != null && ReplaceImgValues[i].matchClass) cls.checked = true;
+            if (id != null && ImagesToReplace[i].matchID) id.checked = true;
+            if (src != null && ImagesToReplace[i].matchSrc) src.checked = true;
+            if (href != null && ImagesToReplace[i].matchHref) href.checked = true;
+            if (cls != null && ImagesToReplace[i].matchClass) cls.checked = true;
             BoldTag(imgId);
             var imageCropDiv = document.getElementById("imageCropDiv_" + imgId);
             var imageCanvas = document.getElementById("imageCanvas_" + imgId);
-            var t = ReplaceImgValues[i].t;
-            var l = ReplaceImgValues[i].l;
-            var w = ReplaceImgValues[i].w;
-            var h = ReplaceImgValues[i].h;
-            var r = ReplaceImgValues[i].r;
-            var imgWidth = ReplaceImgValues[i].iw;
-            var imgSrc = ReplaceImgValues[i].imgSrc;
+            var t = ImagesToReplace[i].t;
+            var l = ImagesToReplace[i].l;
+            var w = ImagesToReplace[i].w;
+            var h = ImagesToReplace[i].h;
+            var r = ImagesToReplace[i].r;
+            var imgWidth = ImagesToReplace[i].iw;
+            var imgSrc = ImagesToReplace[i].imgSrc;
             var useSrc = false;
             var replacementURL = "";
                        
             if (imgSrc != undefined) 
             {
                 imageCanvas.src = imgSrc;
-                imageCanvas.width = Math.round(imageCanvas.width / r * (thumbnailSize / w));  
-                imageCanvas.style = "margin: -" + Math.round(t * (thumbnailSize/w)) + "px 0 0 -" + Math.round(l * (thumbnailSize/w))+ "px;"; 
-                imageCropDiv.style = "width: " + thumbnailSize + "px;height: " + thumbnailSize/w * h + "px;border: 2px solid gray;border-radius: 3px;overflow: hidden;";  
+                imageCanvas.width = Math.round(imageCanvas.width / r * (ThumbnailSize / w));  
+                imageCanvas.style = "margin: -" + Math.round(t * (ThumbnailSize/w)) + "px 0 0 -" + Math.round(l * (ThumbnailSize/w))+ "px;"; 
+                imageCropDiv.style = "width: " + ThumbnailSize + "px;height: " + ThumbnailSize/w * h + "px;border: 2px solid gray;border-radius: 3px;overflow: hidden;";  
                 
             }
         }
