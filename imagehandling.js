@@ -161,6 +161,10 @@ function CreateUniqueID(numDigits = 6)
     return s;
 }
 
+function ImageSelected(e)
+{
+    console.log(e);
+}
 
 function ProcessImages()
 {
@@ -255,21 +259,21 @@ function ProcessImages()
              "<td style=\"border-left: 1px dashed gray\"><center>" +
 //                "<label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label>" +
                 "<div class=\"dropdown\">\
-                    <center><button class=\"dropbtn\" style=\"width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;\";>\
-                    Remove image.  Do not replace.</button></center>\
-                    <div class=\"dropdown-content\">\
-                        <table style=\"padding: 0px;\ class=\"dropTable\">\
+                    <center><button class=\"dropbtn\" style=\"width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;\";>\
+                    <b>REMOVE IMAGE</b></button></center>\
+                    <div class=\"dropdown-content\" style=\"background-color: #9bc3f0;\">\
+                        <table style=\"padding: 1px;\" class=\"dropTable\">\
                             <tr>\
-                                <td style=\"border-top: 0px;\">\
-                                    <button class=\"dropimg\" style=\"opacity: 100%;width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;\">\
-                                    Remove image. Do not replace.</button>\
+                                <td style=\"border-top: 0px;padding: 1px;\">\
+                                    <button class=\"dropimg\" style=\"opacity: 100%;width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;\">\
+                                    <b>REMOVE IMAGE</b></button>\
                                 </td>\
-                                <td style=\"border-top: 0px;\">\
-                                    <button class=\"dropimg\" style=\"background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;background-repeat: no-repeat; background-position: center; background-size: contain;\">\
+                                <td style=\"border-top: 0px;padding: 1px;\">\
+                                    <button class=\"dropimg\" style=\"background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;background-repeat: no-repeat; background-position: center; background-size: contain;\">\
                                 </td>\
-                                <td style=\"border-top: 0px;\">\
-                                    <button class=\"dropimg\" style=\"color: white;width: " + (thumbnailSize + 2) + "px; height: " + (thumbnailSize + 2) + "px;\">\
-                                    Browse for a new image.\
+                                <td style=\"border-top: 0px;padding: 1px;\">\
+                                    <button class=\"dropimg\" style=\"color: white;width: " + (thumbnailSize + 12) + "px; height: " + (thumbnailSize + 12) + "px;\" id=\"btnBrowse" + imgId + "\">\
+                                    <b style='font-size:large'><input style='display:none;' type=\"file\" id=\"browseDialog" + imgId + "\"/>...</b>\
                                     </button>\
                                 </td>\
                             </tr>\
@@ -284,10 +288,14 @@ function ProcessImages()
             var cls = document.getElementById("matchClass" + imgId);
             var scale = document.getElementById("scaleToOld" + imgId);
             var del = document.getElementById("deleteImg" + imgId);
+            var browse = document.getElementById("btnBrowse" + imgId);
+            var browseInput = document.getElementById("browseDialog" + imgId);
             if (id != null) id.addEventListener("change", BoldTag);
             if (href != null) href.addEventListener("change", BoldTag);
             if (src != null) src.addEventListener("change", BoldTag);
             if (cls != null) cls.addEventListener("change", BoldTag);
+            browse.addEventListener("click", function () {browseInput.click();});
+            browseInput.addEventListener("change", ImageSelected);
             scale.addEventListener("change", ScaleChange); 
             del.addEventListener("click", DelImg);
             if (id != null && ReplaceImgValues[i].matchID) id.checked = true;
