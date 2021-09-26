@@ -1,4 +1,4 @@
-var ImageArrayJson = new Array();
+var ImageArrayJson = "";
 var ImagesToReplace = new Array();
 var PickedImageDetails = {};
 var ImgTable = null;
@@ -84,17 +84,17 @@ function ReadImageStorageSynchronous (key) {
                 resolve(undefined);
               } else {
                 ImageArrayJson += result[key];
-                resolve(result[key]);
+                resolve();
               }
         });
     });
 }
 
-function GetImagesFromStorage(imageElement, keyBase, callback) {
-    chrome.storage.local.get(keyBase + "Length", async function (StoreLen){
+function LoadImagesFromStorage(imageElement, callback) {
+    chrome.storage.local.get("ImagesToReplaceLength", async function (StoreLen){
         for (var StoreItem = 0; StoreItem < StoreLen.ImagesToReplaceLength; StoreItem++)
         {
-            var key = keyBase + "_" + StoreItem.toString();
+            var key = "ImagesToReplace_" + StoreItem.toString();
             await ReadImageStorageSynchronous(key);
         }
         callback(imageElement);
@@ -156,6 +156,18 @@ function DelImg(e)
         document.getElementById("NoImagesText").style.display = "inline";
     }
     FlashSaved();
+}
+
+function ReplaceImages()
+{
+    console.log("here");
+    function replaceimage(selector, newImageUrl) 
+    {
+        var elements = document.querySelectorAll(selector);
+        Array.prototype.filter.call(elements, function(element){
+            element.src = newImageUrl;
+        });
+    }
 }
 
 async function ImageSelected(e)
@@ -240,8 +252,9 @@ function ProcessImages()
         PickedImageDetails = {imgId, imageElement: PickedElementToReplace, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc};
     }
 
-    GetImagesFromStorage(PickedElementToReplace, "ImagesToReplace", function(imageElement) { 
-        if (ImageArrayJson!= "")
+    LoadImagesFromStorage(PickedElementToReplace, function(imageElement) { 
+        console.log(imageElement);
+        if (ImageArrayJson!= "[]" && ImageArrayJson != "")
         {
             ImagesToReplace = JSON.parse(ImageArrayJson);
             for (var i = 0; i < ImagesToReplace.length; i++)
@@ -254,23 +267,11 @@ function ProcessImages()
                 UpdateDefaultMatchSelections();
                 ImagesToReplace.splice(ImagesToReplace.length, 0, PickedImageDetails);
             }
-        }
-        else
+        } else
+        if (imageElement != undefined)
         {
-            if (imageElement == undefined)
-            {
-                // // only happens the first time the tool options are accessed if no image was picked and none exist already, providing a default
-                // PickedImageDetails = {
-                //     "imageElement": "<img class=\"fxs-avatarmenu-tenant-image\">",
-                //     "useSrc": false,
-                //     "replacementURL": "https://portal.azure.com/Content/static/MsPortalImpl/AvatarMenu/AvatarMenu_defaultAvatarSmall.png"
-                // };
-            }
-            else
-            {
-                UpdateDefaultMatchSelections();
-                ImagesToReplace = new Array(PickedImageDetails);
-            }
+            UpdateDefaultMatchSelections();
+            ImagesToReplace = new Array(PickedImageDetails);
         }
         UpdateImageStore(ImagesToReplace, "ImagesToReplace");
         

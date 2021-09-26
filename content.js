@@ -1,3 +1,5 @@
+var ImageArrayJson = "";
+
 function escapeRegex(string) {
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
@@ -5,6 +7,30 @@ function escapeRegex(string) {
 function findAndReplace(searchText, replacement, searchNode) {
     var regex = new RegExp("((?<=>)[^<]*)(" + escapeRegex(searchText) + ")([^<]*)", 'g');
     searchNode.innerHTML = searchNode.innerHTML.replace(regex, "$1" + replacement + "$3")
+}
+
+function ReadImageStorageSynchronous (key) {
+    return new Promise((resolve) => {
+        chrome.storage.local.get(key, function (result) {    
+            if (result[key] === undefined) {
+                resolve(undefined);
+              } else {
+                ImageArrayJson += result[key];
+                resolve(result[key]);
+              }
+        });
+    });
+}
+
+function LoadImagesFromStorage(callback) {
+    chrome.storage.local.get("ImagesToReplaceLength", async function (StoreLen){
+        for (var StoreItem = 0; StoreItem < StoreLen.ImagesToReplaceLength; StoreItem++)
+        {
+            var key = "ImagesToReplace_" + StoreItem.toString();
+            await ReadImageStorageSynchronous(key);
+        }
+        callback();
+    });
 }
 
 chrome.storage.sync.get("ConfigArray", function(ca) { 
@@ -21,23 +47,36 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
             }
             });
         }
-        
-        function replaceimage(selector, newImageUrl) 
-        {
-            var elements = document.querySelectorAll(selector);
-            Array.prototype.filter.call(elements, function(element){
-                element.src = newImageUrl;
-            });
-        }
-
         for (var i = 0; i < ca.ConfigArray.length; i++)
+            findAndReplace(ca.ConfigArray[i][0], ca.ConfigArray[i][1], document.body);
+    }
+});
+
+LoadImagesFromStorage(function () {
+    if (ImageArrayJson!= "")
+    {
+        ImagesToReplace = JSON.parse(ImageArrayJson);
+        var elem = document.createElement("html");
+        for (var i = 0; i < ImagesToReplace.length; i++)
         {
-            if (ca.ConfigArray[i][0].startsWith('img.') && ca.ConfigArray[i][1].startsWith("http"))
-                replaceimage(ca.ConfigArray[i][0], ca.ConfigArray[i][1]);
-            else
-            {
-                findAndReplace(ca.ConfigArray[i][0], ca.ConfigArray[i][1], document.body);
-            }
+            var currentImg = ImagesToReplace[i];
+            elem.innerHTML = currentImg.imageElement;
+
+            var idMatch = elem.querySelector("[id]");
+            var classMatch = elem.querySelector("[class]");
+            var hrefMatch = elem.querySelector("[href]");
+            var srcMatch = elem.querySelector("[src]");
+
+            var img= document.createElement("img");
+            img.src = currentImg.replacementURL;
+
+
+            document.querySelectorAll("[id='" + idMatch.id + "']")[0].replaceWith(img);
+            
+           
+            //if (currentImg.matchID)
+
         }
     }
 });
+
