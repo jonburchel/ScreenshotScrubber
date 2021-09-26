@@ -70,12 +70,13 @@ LoadImagesFromStorage(function () {
             var img= document.createElement("img");
             img.src = currentImg.replacementURL;
 
-
-            document.querySelectorAll("[id='" + idMatch.id + "']")[0].replaceWith(img);
-            
-           
-            //if (currentImg.matchID)
-
+            //incomplete...  only matches if a single element has all criteria, 
+            //but need to match if any element where it or any child elements have the criteria too...
+            var qry = (currentImg.matchID ? "[id='" + idMatch.id + "']" : "") +
+                (currentImg.matchSrc ? "[src='" + srcMatch.id + "']" : "") +
+                (currentImg.matchHref ? "[href='" + hrefMatch.id + "']" : "") +
+                (currentImg.matchClass ? "[class='" + classMatch.id + "']" : "");
+            document.querySelectorAll(qry)[0].replaceWith(img);
         }
     }
 });

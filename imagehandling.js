@@ -189,12 +189,26 @@ async function ImageSelected(e)
     if (e.srcElement.id.search("btnDefaultImg") != -1)
     {
         rib.style.background = "url(./images/AvatarMenu_defaultAvatarSmall.png)";
-        ImagesToReplace.find(i=>i.imgId == r).replacementURL = "./images/AvatarMenu_defaultAvatarSmall.png";
-        rib.style.backgroundRepeat = "no-repeat"; 
-        rib.style.backgroundPosition = "center"; 
-        rib.style.backgroundSize = "contain";
-        rib.innerHTML = "";
-        UpdateImageStore(ImagesToReplace, "ImagesToReplace");
+        var request = new XMLHttpRequest();
+        request.open('GET', "./images/AvatarMenu_defaultAvatarSmall.png", true);
+        request.responseType = 'blob';
+        request.onload = function() {
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                var rx = new RegExp("[A-Za-z]*", "g");
+                var r = e.srcElement.id.replace(rx, "");
+                var ReplaceImageButton = document.getElementById("ReplaceImageButton" + r);
+                ReplaceImageButton.style.background = "url(" + reader.result + ")";
+                ReplaceImageButton.style.backgroundRepeat = "no-repeat"; 
+                ReplaceImageButton.style.backgroundPosition = "center"; 
+                ReplaceImageButton.style.backgroundSize = "contain";
+                ReplaceImageButton.innerHTML = "";
+                ImagesToReplace.find(i=>i.imgId == r).replacementURL = reader.result;
+                UpdateImageStore(ImagesToReplace, "ImagesToReplace");
+            }
+            reader.readAsDataURL(request.response);
+        };
+        request.send();
     } else
     if (e.srcElement.id.search("browseDialog") != -1)
     {
@@ -219,6 +233,8 @@ async function ImageSelected(e)
 
 function UpdateDefaultMatchSelections()
 {
+    console.log(PickedImageDetails);
+
     PickedImageDetails.matchID = PickedImageDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
     if (!PickedImageDetails.matchID) PickedImageDetails.matchClass = PickedImageDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
     if (!PickedImageDetails.matchID && !PickedImageDetails.matchClass) PickedImageDetails.matchSrc = PickedImageDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) != -1;
@@ -253,7 +269,6 @@ function ProcessImages()
     }
 
     LoadImagesFromStorage(PickedElementToReplace, function(imageElement) { 
-        console.log(imageElement);
         if (ImageArrayJson!= "[]" && ImageArrayJson != "")
         {
             ImagesToReplace = JSON.parse(ImageArrayJson);
@@ -299,9 +314,10 @@ function ProcessImages()
         {
             var imgId = ImagesToReplace[i].imgId;
             ImgTable.insertRow(ImgTable.rows.length - 1);
-            const RemoveInlineSrcData = /src=.*\"/g;
-            var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"");
-            const RemoveInlineSrcSetData = /srcset=.*\"/g;
+            const RemoveInlineSrcData = /(src\s*=\s*\"data:.*?)\"(.*)/g;
+            console.log(ImagesToReplace[i].imageElement)
+            var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"$2");
+            const RemoveInlineSrcSetData = /(srcset\s*=\s*\".*?)\"/g;
             scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
             
             console.log(ImagesToReplace[i].replacementURL);
@@ -379,12 +395,7 @@ function ProcessImages()
                 }
             });
             defaultimg.addEventListener("click", ImageSelected);
-            noimg.addEventListener("click", ImageSelected);
-            
-            if (id != null) id.addEventListener("change", BoldTag);
-            if (href != null) href.addEventListener("change", BoldTag);
-            if (src != null) src.addEventListener("change", BoldTag);
-            if (cls != null) cls.addEventListener("change", BoldTag);
+            noimg.addEventListener("click", ImageSelected);        
 
             del.addEventListener("click", DelImg);
             
@@ -392,6 +403,11 @@ function ProcessImages()
             if (src != null && ImagesToReplace[i].matchSrc) src.checked = true;
             if (href != null && ImagesToReplace[i].matchHref) href.checked = true;
             if (cls != null && ImagesToReplace[i].matchClass) cls.checked = true;
+
+            if (id != null) id.addEventListener("change", BoldTag);
+            if (href != null) href.addEventListener("change", BoldTag);
+            if (src != null) src.addEventListener("change", BoldTag);
+            if (cls != null) cls.addEventListener("change", BoldTag);
             
             BoldTag(imgId);
             
