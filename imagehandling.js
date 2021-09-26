@@ -211,6 +211,7 @@ async function ImageSelected(e)
     } else
     if (e.srcElement.id.search("browseDialog") != -1)
     {
+        console.log(e.srcElement.files);
         var file = e.srcElement.files[0];
         var reader = new FileReader();
         reader.onloadend = function() {
