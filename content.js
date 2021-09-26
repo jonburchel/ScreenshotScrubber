@@ -71,6 +71,8 @@ LoadImagesFromStorage(function () {
             img.src = currentImg.replacementURL;
             img.width = currentImg.w;
             img.height = currentImg.h;
+            img.style.objectFit = "cover"
+
 
             //incomplete...  only matches if a single element has all criteria, 
             //but need to match if any element where it or any child elements have the criteria too...
