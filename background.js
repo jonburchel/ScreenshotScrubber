@@ -5,6 +5,7 @@ function createScreenshot(callback) {
 chrome.contextMenus.create({
   title:"Pick an image on the current page to replace",
   contexts:["action"],
+  
   id: "ScreenScrubberPickImageMenu",
 });
 
