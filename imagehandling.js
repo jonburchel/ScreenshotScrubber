@@ -319,7 +319,7 @@ function ProcessImages()
             
             ImgTable.rows[ImgTable.rows.length - 2].innerHTML = 
              "<td ><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
-             "<td style=\"font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
+             "<td style=\"max-width: 380px;word-wrap: break-word;font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" +
                 (scrubbedElement.search(new RegExp("id\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchId" + imgId + "\" name=\"matchId" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" + 
