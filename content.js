@@ -69,6 +69,8 @@ LoadImagesFromStorage(function () {
 
             var img= document.createElement("img");
             img.src = currentImg.replacementURL;
+            img.width = currentImg.w;
+            img.height = currentImg.h;
 
             //incomplete...  only matches if a single element has all criteria, 
             //but need to match if any element where it or any child elements have the criteria too...
@@ -76,7 +78,18 @@ LoadImagesFromStorage(function () {
                 (currentImg.matchSrc ? "[src='" + srcMatch.id + "']" : "") +
                 (currentImg.matchHref ? "[href='" + hrefMatch.id + "']" : "") +
                 (currentImg.matchClass ? "[class='" + classMatch.id + "']" : "");
-            document.querySelectorAll(qry)[0].replaceWith(img);
+            var matches = document.querySelectorAll(qry);
+            for (var j = 0; j < matches.length; j++)
+            {
+                var match = matches[j];
+                // while (match.childNodes[0] != null && match.tagName != "IMG" && match.tagName != "SVG")
+                //      match = match.childNodes[0];
+                console.log(img.src == "");
+                if (currentImg.replacementURL != "")
+                    matches[j].replaceWith(img);
+                else
+                    matches[j].remove();
+            }
         }
     }
 });
