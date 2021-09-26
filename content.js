@@ -77,9 +77,9 @@ LoadImagesFromStorage(function () {
             //incomplete...  only matches if a single element has all criteria, 
             //but need to match if any element where it or any child elements have the criteria too...
             var qry = (currentImg.matchID ? "[id='" + idMatch.id + "']" : "") +
-                (currentImg.matchSrc ? "[src='" + srcMatch.id + "']" : "") +
-                (currentImg.matchHref ? "[href='" + hrefMatch.id + "']" : "") +
-                (currentImg.matchClass ? "[class='" + classMatch.id + "']" : "");
+                (currentImg.matchSrc ? "[src='" + srcMatch.src + "']" : "") +
+                (currentImg.matchHref ? "[href='" + hrefMatch.href + "']" : "") +
+                (currentImg.matchClass ? "[class='" + classMatch.className + "']" : "");
             var matches = document.querySelectorAll(qry);
             for (var j = 0; j < matches.length; j++)
             {
