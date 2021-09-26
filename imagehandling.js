@@ -171,14 +171,18 @@ async function ImageSelected(e)
     {
         rib.style.background = "";
         rib.innerHTML = "<b>remove: no new image</b>"
+        ImagesToReplace.find(i=>i.imgId == r).replacementURL = "";
+        UpdateImageStore(ImagesToReplace, "ImagesToReplace");
     } else
     if (e.srcElement.id.search("btnDefaultImg") != -1)
     {
         rib.style.background = "url(./images/AvatarMenu_defaultAvatarSmall.png)";
+        ImagesToReplace.find(i=>i.imgId == r).replacementURL = "./images/AvatarMenu_defaultAvatarSmall.png";
         rib.style.backgroundRepeat = "no-repeat"; 
         rib.style.backgroundPosition = "center"; 
         rib.style.backgroundSize = "contain";
         rib.innerHTML = "";
+        UpdateImageStore(ImagesToReplace, "ImagesToReplace");
     } else
     if (e.srcElement.id.search("browseDialog") != -1)
     {
@@ -193,9 +197,12 @@ async function ImageSelected(e)
             ReplaceImageButton.style.backgroundPosition = "center"; 
             ReplaceImageButton.style.backgroundSize = "contain";
             ReplaceImageButton.innerHTML = "";
+            ImagesToReplace.find(i=>i.imgId == r).replacementURL = reader.result;
+            UpdateImageStore(ImagesToReplace, "ImagesToReplace");
         }
         reader.readAsDataURL(file);
     }
+    FlashSaved();
 }
 
 function UpdateDefaultMatchSelections()
@@ -296,6 +303,7 @@ function ProcessImages()
             const RemoveInlineSrcSetData = /srcset=.*\"/g;
             scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
             
+            console.log(ImagesToReplace[i].replacementURL);
             ImgTable.rows[ImgTable.rows.length - 2].innerHTML = 
              "<td ><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
              "<td style=\"font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
@@ -310,8 +318,14 @@ function ProcessImages()
              "<td style=\"border-left: 1px dashed gray\" valign=center><center>" +
 //                "<label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label>" +
                 "<div class=\"dropdown\" style='position:relative; top: 5px;'>\
-                    <center><button class=\"dropbtn\" id=\"ReplaceImageButton" + imgId + "\" style=\"width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\";>\
-                    <b>remove: no new image</b></button></center>\
+                    <center>" +
+                        "<button class=\"dropbtn\" id=\"ReplaceImageButton" + imgId + "\" \
+                            style=\"width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;" +
+                            (ImagesToReplace[i].replacementURL == "" ? "" : "background: url(" + ImagesToReplace[i].replacementURL + ");background-repeat: no-repeat; background-position: center; background-size: contain;") +
+                            "\">" +
+                            (ImagesToReplace[i].replacementURL == "" ? "<b>remove: no new image</b>" : "") +
+                        "</button>\
+                    </center>\
                     <div style='border:3px solid gray;background-color:gray;opacity:50%;position:relative;top:-7px;'></div>\
                     <div class=\"arrow-down\" style=\"opacity: 60%;position: relative; top: -12px;\"></div>\
                     <div class=\"dropdown-content\" style=\"background-color: #9bc3f0;position:inline;top:55px;\">\
