@@ -82,9 +82,6 @@ LoadImagesFromStorage(function () {
             for (var j = 0; j < matches.length; j++)
             {
                 var match = matches[j];
-                // while (match.childNodes[0] != null && match.tagName != "IMG" && match.tagName != "SVG")
-                //      match = match.childNodes[0];
-                console.log(img.src == "");
                 if (currentImg.replacementURL != "")
                     matches[j].replaceWith(img);
                 else

@@ -160,7 +160,6 @@ function DelImg(e)
 
 function ReplaceImages()
 {
-    console.log("here");
     function replaceimage(selector, newImageUrl) 
     {
         var elements = document.querySelectorAll(selector);
@@ -233,8 +232,6 @@ async function ImageSelected(e)
 
 function UpdateDefaultMatchSelections()
 {
-    console.log(PickedImageDetails);
-
     PickedImageDetails.matchID = PickedImageDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
     if (!PickedImageDetails.matchID) PickedImageDetails.matchClass = PickedImageDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
     if (!PickedImageDetails.matchID && !PickedImageDetails.matchClass) PickedImageDetails.matchSrc = PickedImageDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) != -1;
@@ -315,12 +312,10 @@ function ProcessImages()
             var imgId = ImagesToReplace[i].imgId;
             ImgTable.insertRow(ImgTable.rows.length - 1);
             const RemoveInlineSrcData = /(src\s*=\s*\"data:.*?)\"(.*)/g;
-            console.log(ImagesToReplace[i].imageElement)
             var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"$2");
             const RemoveInlineSrcSetData = /(srcset\s*=\s*\".*?)\"/g;
             scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
             
-            console.log(ImagesToReplace[i].replacementURL);
             ImgTable.rows[ImgTable.rows.length - 2].innerHTML = 
              "<td ><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
              "<td style=\"font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
