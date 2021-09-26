@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
         }
         else
           chrome.tabs.create({ url: qryUrl, active: false }, function(tab) {
-            chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 800, width: 700});
+            chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 775, width: 700});
           });
       });           
     });
