@@ -1,12 +1,20 @@
 var ImageArrayJson = new Array();
 var ImagesToReplace = new Array();
-var ReplacementImages = new Array();
 var PickedImageDetails = {};
 var ImgTable = null;
 var PageLoading = true;
 var ThumbnailSize = 42;
 
 document.body.addEventListener("load", ProcessImages());
+
+function CreateUniqueID(numDigits = 10) 
+{
+    var s = "";
+    s += Math.round(Math.random() * 9.5 + .5).toString(); //forces first number to be non-zero
+    for (var i = 0; i < numDigits - 1; i++)
+        s += Math.round(Math.random() * 9.5 - .5).toString();
+    return s;
+}
 
 function GetQueryVariable(variable) {
     var query = window.location.search.substring(1);
@@ -21,6 +29,15 @@ function GetQueryVariable(variable) {
 
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+function htmlEscape(str) {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
 function UpdateImageStore(objectToStore, key) {
@@ -78,20 +95,10 @@ function GetImagesFromStorage(imageElement, keyBase, callback) {
         for (var StoreItem = 0; StoreItem < StoreLen.ImagesToReplaceLength; StoreItem++)
         {
             var key = keyBase + "_" + StoreItem.toString();
-            console.log(key);
             await ReadImageStorageSynchronous(key);
         }
         callback(imageElement);
     });
-}
-
-function htmlEscape(str) {
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
 }
 
 function BoldAttr(tags, attributeToBold, clearFirst=false)
@@ -136,42 +143,59 @@ function BoldTag(e)
     if (!PageLoading) FlashSaved();
 }
 
-function ScaleChange(e)
-{
-    var rx = new RegExp("[A-Za-z]*", "g");
-    var r = this.id.replace(rx, "");
-    ImagesToReplace.find(i=>i.imgId == r).scaleToOld = this.checked;
-    UpdateImageStore(ImagesToReplace, "ImagesToReplace");
-    if (!PageLoading) FlashSaved();
-}
-
 function DelImg(e)
 {
     var rx = new RegExp("[A-Za-z]*", "g");
-    var r = parseInt(this.id.replace(rx, ""));
+    var r = this.id.replace(rx, "");
     ImgTable.deleteRow(ImagesToReplace.findIndex(i=>i.imgId == r) + 2);
     ImagesToReplace.splice(ImagesToReplace.findIndex(i=>i.imgId == r), 1);
     UpdateImageStore(ImagesToReplace, "ImagesToReplace");
+    if (ImagesToReplace.length == 0)
+    {
+        ImgTable.style.display = "none";
+        document.getElementById("NoImagesText").style.display = "inline";
+    }
     FlashSaved();
 }
-function CreateUniqueID(numDigits = 6) 
-{
-    var s = "";
-    for (var i = 0; i < numDigits; i++)
-        s += Math.round(Math.random() * 9.5 - .5).toString();
-    return s;
-}
 
-
-function ImageSelected(e)
+async function ImageSelected(e)
 {
-    var file = e.srcElement.files[0];
-    var reader = new FileReader();
-    reader.onloadend = function() {
-      console.log('RESULT', reader.result)
+    var r = null; var rib = null;
+    var rx = new RegExp("[A-Za-z]*", "g");
+    for (var i = 0; i < e.path.length; i++)
+        if (e.path[i].id != "") break;
+    r = e.path[i].id.replace(rx, "");
+    rib = document.getElementById("ReplaceImageButton" + r);
+
+    if (e.srcElement.parentElement.id.search("btnNoImg") != -1 || e.srcElement.id.search("btnNoImg") != -1)
+    {
+        rib.style.background = "";
+        rib.innerHTML = "<b>remove: no new image</b>"
+    } else
+    if (e.srcElement.id.search("btnDefaultImg") != -1)
+    {
+        rib.style.background = "url(./images/AvatarMenu_defaultAvatarSmall.png)";
+        rib.style.backgroundRepeat = "no-repeat"; 
+        rib.style.backgroundPosition = "center"; 
+        rib.style.backgroundSize = "contain";
+        rib.innerHTML = "";
+    } else
+    if (e.srcElement.id.search("browseDialog") != -1)
+    {
+        var file = e.srcElement.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            var rx = new RegExp("[A-Za-z]*", "g");
+            var r = e.srcElement.id.replace(rx, "");
+            var ReplaceImageButton = document.getElementById("ReplaceImageButton" + r);
+            ReplaceImageButton.style.background = "url(" + reader.result + ")";
+            ReplaceImageButton.style.backgroundRepeat = "no-repeat"; 
+            ReplaceImageButton.style.backgroundPosition = "center"; 
+            ReplaceImageButton.style.backgroundSize = "contain";
+            ReplaceImageButton.innerHTML = "";
+        }
+        reader.readAsDataURL(file);
     }
-    console.log(reader.readAsDataURL(file));
-    
 }
 
 function UpdateDefaultMatchSelections()
@@ -184,6 +208,11 @@ function UpdateDefaultMatchSelections()
 
 function ProcessImages()
 {
+    var addImgRowBttn = document.getElementById("AddImageRowButton");
+    addImgRowBttn.addEventListener("click", function (e)
+    {
+        alert("To add new images for replacement, browse to a page with the image, then right click the Extension icon in the toolbar or on the Extensions dropdown, to choose Pick an image on the current page to replace.");
+    });
     var PickedElementToReplace = GetQueryVariable("imageElement");
     if (PickedElementToReplace != undefined)
     {
@@ -200,9 +229,8 @@ function ProcessImages()
         var matchClass = false;
         var matchHref = false;
         var matchSrc = false;
-        var scaleToOld = true;
         var imgId = CreateUniqueID();
-        PickedImageDetails = {imgId, imageElement: PickedElementToReplace, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc, scaleToOld};
+        PickedImageDetails = {imgId, imageElement: PickedElementToReplace, useSrc, replacementURL, t, l, w, h, r, iw, imgSrc, matchID, matchClass, matchSrc};
     }
 
     GetImagesFromStorage(PickedElementToReplace, "ImagesToReplace", function(imageElement) { 
@@ -235,7 +263,6 @@ function ProcessImages()
             {
                 UpdateDefaultMatchSelections();
                 ImagesToReplace = new Array(PickedImageDetails);
-                console.log(ImagesToReplace);
             }
         }
         UpdateImageStore(ImagesToReplace, "ImagesToReplace");
@@ -254,6 +281,12 @@ function ProcessImages()
 
         ImgTable = document.getElementById("ImageList");
 
+        if (ImagesToReplace.length == 0)
+        {
+            ImgTable.style.display = "none";
+            document.getElementById("NoImagesText").style.display = "inline";
+        }
+
         for (var i = 0; i < ImagesToReplace.length; i++)
         {
             var imgId = ImagesToReplace[i].imgId;
@@ -262,8 +295,9 @@ function ProcessImages()
             var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"");
             const RemoveInlineSrcSetData = /srcset=.*\"/g;
             scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
+            
             ImgTable.rows[ImgTable.rows.length - 2].innerHTML = 
-             "<td><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
+             "<td ><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
              "<td style=\"font-size: x-small;\" id=\"htmlTag" + imgId + "\">" +  scrubbedElement + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" +
                 (scrubbedElement.search(new RegExp("id\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchId" + imgId + "\" name=\"matchId" + imgId + "\"></center>") + "</td>" +
@@ -273,25 +307,26 @@ function ProcessImages()
                 (scrubbedElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchSrc" + imgId + "\" name=\"matchSrc" + i + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\"><center>" +
                 (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + imgId + "\" name=\"matchHref" + imgId + "\"></center>") + "</td>" +
-             "<td style=\"border-left: 1px dashed gray;\"><center><input type=\"checkbox\" id=\"scaleToOld" + imgId + "\" name=\"scaleToOld" + imgId + "\"></center></td>" +
-             "<td style=\"border-left: 1px dashed gray\"><center>" +
+             "<td style=\"border-left: 1px dashed gray\" valign=center><center>" +
 //                "<label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label>" +
-                "<div class=\"dropdown\">\
-                    <center><button class=\"dropbtn\" style=\"width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\";>\
-                    <b>REMOVE IMAGE</b></button></center>\
-                    <div class=\"dropdown-content\" style=\"background-color: #9bc3f0;\">\
+                "<div class=\"dropdown\" style='position:relative; top: 5px;'>\
+                    <center><button class=\"dropbtn\" id=\"ReplaceImageButton" + imgId + "\" style=\"width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\";>\
+                    <b>remove: no new image</b></button></center>\
+                    <div style='border:3px solid gray;background-color:gray;opacity:50%;position:relative;top:-7px;'></div>\
+                    <div class=\"arrow-down\" style=\"opacity: 60%;position: relative; top: -12px;\"></div>\
+                    <div class=\"dropdown-content\" style=\"background-color: #9bc3f0;position:inline;top:55px;\">\
                         <table style=\"padding: 1px;\" class=\"dropTable\">\
                             <tr>\
-                                <td style=\"border-top: 0px;padding: 1px;\">\
-                                    <button class=\"dropimg\" style=\"opacity: 100%;width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\">\
-                                    <b>REMOVE IMAGE</b></button>\
+                                <td style=\"border-top: 0px;padding: 0px;position:relative;top:1px;\">\
+                                    <button class=\"dropimg\" style=\"width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\" id=\"btnNoImg" + imgId + "\">\
+                                    <b>remove: no new image</b></button>\
                                 </td>\
-                                <td style=\"border-top: 0px;padding: 1px;\">\
-                                    <button class=\"dropimg\" style=\"background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;background-repeat: no-repeat; background-position: center; background-size: contain;\">\
+                                <td style=\"border-top: 0px;padding: 0px;\">\
+                                    <button class=\"dropimg\" style=\"position:relative;top:1px;background: url(./images/avatarmenu_defaultavatarsmall.png);width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;background-repeat: no-repeat; background-position: center; background-size: cover;\" id=\"btnDefaultImg" + imgId + "\"/>\
                                 </td>\
-                                <td style=\"border-top: 0px;padding: 1px;\">\
+                                <td style=\"border-top: 0px;padding: 0px;position:relative;top:1px;\">\
                                     <button class=\"dropimg\" style=\"color: white;width: " + (ThumbnailSize + 12) + "px; height: " + (ThumbnailSize + 12) + "px;\" id=\"btnBrowse" + imgId + "\">\
-                                    <b style='font-size:large'><input style='display:none;' accept='image/*' type=\"file\" id=\"browseDialog" + imgId + "\"/>...</b>\
+                                    <b style='font-size:large'><input style='visibility:hidden;' accept='image/*' type=\"file\" id=\"browseDialog" + imgId + "\">...</b>\
                                     </button>\
                                 </td>\
                             </tr>\
@@ -300,27 +335,51 @@ function ProcessImages()
                 </div>" +
                 "<center></td>" +
              "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"deleteImg" + imgId + "\"></td>";
+
             var id = document.getElementById("matchId" + imgId);
             var href = document.getElementById("matchHref" + imgId);
             var src = document.getElementById("matchSrc" + imgId);
             var cls = document.getElementById("matchClass" + imgId);
-            var scale = document.getElementById("scaleToOld" + imgId);
             var del = document.getElementById("deleteImg" + imgId);
-            var browse = document.getElementById("btnBrowse" + imgId);
-            var browseInput = document.getElementById("browseDialog" + imgId);
+
+            var browseBtn = document.getElementById("btnBrowse" + imgId);
+            var browseDialog = document.getElementById("browseDialog" + imgId);
+            var noimg = document.getElementById("btnNoImg" + imgId);
+            var defaultimg = document.getElementById("btnDefaultImg" + imgId);
+            
+            browseDialog.addEventListener("change", ImageSelected);
+            browseBtn.addEventListener("click", function (e) { 
+                if (e.isTrusted)
+                {
+                    for (var i = 0; i < e.path.length, i++;)
+                    {
+                        if (e.path[i].id != "")
+                            break;
+                    }
+                    var rx = new RegExp("[A-Za-z]*", "g");
+                    var r = e.path[i].id.replace(rx, "");
+                    var bd = document.getElementById("browseDialog" + r);
+                    if (bd != null)
+                        bd.click();
+                }
+            });
+            defaultimg.addEventListener("click", ImageSelected);
+            noimg.addEventListener("click", ImageSelected);
+            
             if (id != null) id.addEventListener("change", BoldTag);
             if (href != null) href.addEventListener("change", BoldTag);
             if (src != null) src.addEventListener("change", BoldTag);
             if (cls != null) cls.addEventListener("change", BoldTag);
-            browse.addEventListener("click", function () {browseInput.click();});
-            browseInput.addEventListener("change", ImageSelected);
-            scale.addEventListener("change", ScaleChange); 
+
             del.addEventListener("click", DelImg);
+            
             if (id != null && ImagesToReplace[i].matchID) id.checked = true;
             if (src != null && ImagesToReplace[i].matchSrc) src.checked = true;
             if (href != null && ImagesToReplace[i].matchHref) href.checked = true;
             if (cls != null && ImagesToReplace[i].matchClass) cls.checked = true;
+            
             BoldTag(imgId);
+            
             var imageCropDiv = document.getElementById("imageCropDiv_" + imgId);
             var imageCanvas = document.getElementById("imageCanvas_" + imgId);
             var t = ImagesToReplace[i].t;
@@ -332,7 +391,7 @@ function ProcessImages()
             var imgSrc = ImagesToReplace[i].imgSrc;
             var useSrc = false;
             var replacementURL = "";
-                       
+
             if (imgSrc != undefined) 
             {
                 imageCanvas.src = imgSrc;
@@ -342,6 +401,7 @@ function ProcessImages()
                 
             }
         }
+
         PageLoading = false;
     });
 }

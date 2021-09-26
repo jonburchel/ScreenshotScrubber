@@ -45,7 +45,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
             focused: true,
             top: 100,
             left: 100,
-            height: 600,
+            height: 800,
             width: 700
         });
       });
