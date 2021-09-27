@@ -75,7 +75,7 @@ async function FlashSaved()
 {
     var SavedDiv = document.getElementById("SavedDiv");
     SavedDiv.style.opacity = "100%";
-    await sleep(250);
+    await sleep(500);
     for (var i = 100; i >= 0; i-=1)
     {
         SavedDiv.style.opacity = (i / 100);
