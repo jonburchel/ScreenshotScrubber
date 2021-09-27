@@ -14,7 +14,7 @@ document.addEventListener('mouseup', function(mousePos){
             {
               i++;
             }
-            console.log(elems[i]);
+
             if (i >= elems.length) { i = originalI; }
             elem = elems[i];
             var offsets = elem.getBoundingClientRect();

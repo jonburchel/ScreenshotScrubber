@@ -2,11 +2,15 @@ function createScreenshot(callback) {
   chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);
 }
 
-chrome.contextMenus.create({
-  title:"Pick an image on the current page to replace",
-  contexts:["action"],
-  id: "ScreenScrubberPickImageMenu",
-});
+try
+{
+  chrome.contextMenus.create({
+    title:"Pick an image on the current page to replace",
+    contexts:["action"],
+    id: "ScreenScrubberPickImageMenu",
+  });
+}
+catch(e){}
 
 chrome.action.onClicked.addListener((tab) => {
     chrome.scripting.executeScript({

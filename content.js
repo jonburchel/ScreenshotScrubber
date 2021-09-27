@@ -73,21 +73,22 @@ LoadImagesFromStorage(function () {
             img.height = currentImg.h;
             img.style.objectFit = "cover"
 
-
             //incomplete...  only matches if a single element has all criteria, 
             //but need to match if any element where it or any child elements have the criteria too...
             var qry = (currentImg.matchID ? "[id='" + idMatch.id + "']" : "") +
                 (currentImg.matchSrc ? "[src='" + srcMatch.src + "']" : "") +
-                (currentImg.matchHref ? "[href='" + hrefMatch.href + "']" : "") +
+                (currentImg.matchHref ? "[href='" + hrefMatch.href.baseVal + "']" : "") +
                 (currentImg.matchClass ? "[class='" + classMatch.className + "']" : "");
             var matches = document.querySelectorAll(qry);
             for (var j = 0; j < matches.length; j++)
             {
                 var match = matches[j];
+                if (match.href != undefined) // href containing svg's should be replaced by parent element...
+                    match = match.parentElement;
                 if (currentImg.replacementURL != "")
-                    matches[j].replaceWith(img);
+                    match.replaceWith(img);
                 else
-                    matches[j].remove();
+                    match.remove();
             }
         }
     }
