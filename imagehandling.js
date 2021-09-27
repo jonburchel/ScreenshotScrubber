@@ -328,7 +328,6 @@ function ProcessImages()
              "<td style=\"border-left: 1px dashed gray\"><center>" +
                 (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + imgId + "\" name=\"matchHref" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\" valign=center><center>" +
-//                "<label style=\"cursor:pointer;color:blue;text-decoration:underline;\">Browse<input type=\"file\" style=\"position: fixed; top: -100em\" id=\"browse" + imgId + "\"></label>" +
                 "<div class=\"dropdown\" style='position:relative; top: 5px;'>\
                     <center>" +
                         "<button class=\"dropbtn\" id=\"ReplaceImageButton" + imgId + "\" \

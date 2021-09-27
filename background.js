@@ -2,15 +2,19 @@ function createScreenshot(callback) {
   chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);
 }
 
-try
+for (var i = 0; i < chrome.contextMenus.length; i++)
 {
-  chrome.contextMenus.create({
-    title:"Pick an image on the current page to replace",
-    contexts:["action"],
-    id: "ScreenScrubberPickImageMenu",
-  });
+    if (chrome.contextMenus[i].id == "ScreenScrubberPickImageMenu");
+      break;
 }
-catch(e){}
+if (i == chrome.contextMenus.length || i == 0)
+{
+    chrome.contextMenus.create({
+      title:"Pick an image on the current page to replace",
+      contexts:["action"],
+      id: "ScreenScrubberPickImageMenu",
+    });
+}
 
 chrome.action.onClicked.addListener((tab) => {
     chrome.scripting.executeScript({
