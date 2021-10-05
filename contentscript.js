@@ -10,10 +10,13 @@ document.addEventListener('mouseup', function(mousePos){
           elems[i].tagName.toLowerCase() == "svg")
       {
             var originalI = i;
-            while(i <= elems.length && elems[i].id == "" && elems[i].className == "" && elems[i].src == "")
+            if (elems[i].tagName.toLowerCase() == "svg")
             {
-              i++;
+              while(i <= elems.length && elems[i].tagName.toLowerCase() != "div")
+                i++;
             }
+            while(i <= elems.length && elems[i].id == "" && elems[i].className == "" && elems[i].src == "")
+              i++;
 
             if (i >= elems.length) { i = originalI; }
             elem = elems[i];
@@ -28,9 +31,10 @@ document.addEventListener('mouseup', function(mousePos){
                       imgWidth: window.innerWidth,
                       pixelRatio: window.devicePixelRatio,
                       from: 'mouseup'};
-            chrome.runtime.sendMessage(msg, function(response) {
-              document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection
-            });
+              chrome.runtime.sendMessage(msg, function(response) {
+                console.log("here");
+                document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection
+              });
             document.body.style.cursor = "default";
             i = elems.length;
           }

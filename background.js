@@ -4,6 +4,7 @@ function createScreenshot(callback) {
 
 for (var i = 0; i < chrome.contextMenus.length; i++)
 {
+  console.log(chrome.contextMenus[i].id)
     if (chrome.contextMenus[i].id == "ScreenScrubberPickImageMenu");
       break;
 }

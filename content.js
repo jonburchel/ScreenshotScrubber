@@ -6,7 +6,9 @@ function escapeRegex(string) {
 
 function findAndReplace(searchText, replacement, searchNode) {
     var regex = new RegExp("((?<=>)[^<]*)(" + escapeRegex(searchText) + ")([^<]*)", 'g');
-    searchNode.innerHTML = searchNode.innerHTML.replace(regex, "$1" + replacement + "$3")
+    try { 
+        searchNode.innerHTML = searchNode.innerHTML.replace(regex, "$1" + replacement + "$3") 
+    } catch(e) {} // ignore any errors caused by script replacement on the page
 }
 
 function ReadImageStorageSynchronous (key) {
