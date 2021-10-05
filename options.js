@@ -1,9 +1,7 @@
 let AddRowButton = document.getElementById("AddRowButton");
 AddRowButton.addEventListener("click", AddRow);
 window.addEventListener("unload", StoreConfigValues);
-//document.getElementById("Original0").addEventListener("focusout", StoreConfigValues);
 document.getElementById("Original0").addEventListener("input", function(e) { DataChanged(e); });
-//document.getElementById("New0").addEventListener("focusout", StoreConfigValues);
 document.getElementById("New0").addEventListener("input", function(e) { DataChanged(e); });
 document.getElementById("Delete0").addEventListener("click", function(e) { DeleteRow(e); });
 

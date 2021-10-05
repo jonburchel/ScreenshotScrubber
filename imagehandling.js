@@ -106,12 +106,7 @@ function BoldAttr(tags, attributeToBold, clearFirst=false)
     tags = tags.replaceAll("<b style=\"background-color: #9bc3f0;\">", "___BSTART___").replaceAll("</b>", "___BEND___").replaceAll("\"", "&quot;").replaceAll("___BSTART___", "<b style=\"background-color: #9bc3f0;\">").replaceAll("___BEND___", "</b>");
     if (clearFirst)
         tags = tags.replaceAll("<b style=\"background-color: #9bc3f0;\">", "").replaceAll("</b>", "");
-    var rx = null;
-    if (attributeToBold == "src")
-        rx = new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "i");
-    else
-        rx = new RegExp("(" + attributeToBold.toLowerCase() + ")\\s*=\\s*&quot;(.*?)&quot;", "i");
-
+    var rx = new RegExp("(" + attributeToBold.toLowerCase() + ")\\s*=\\s*&quot;(.*?)&quot;", "i");
     return tags.replace(rx, "<b style=\"background-color: #9bc3f0;\">$1</b>=&quot;<b style=\"background-color: #9bc3f0;\">$2</b>&quot;");
 } 
 
@@ -156,17 +151,6 @@ function DelImg(e)
         document.getElementById("NoImagesText").style.display = "inline";
     }
     FlashSaved();
-}
-
-function ReplaceImages()
-{
-    function replaceimage(selector, newImageUrl) 
-    {
-        var elements = document.querySelectorAll(selector);
-        Array.prototype.filter.call(elements, function(element){
-            element.src = newImageUrl;
-        });
-    }
 }
 
 async function ImageSelected(e)
@@ -232,10 +216,10 @@ async function ImageSelected(e)
 
 function UpdateDefaultMatchSelections()
 {
-    PickedImageDetails.matchID = PickedImageDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
-    if (!PickedImageDetails.matchID) PickedImageDetails.matchClass = PickedImageDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
-    if (!PickedImageDetails.matchID && !PickedImageDetails.matchClass) PickedImageDetails.matchSrc = PickedImageDetails.imageElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) != -1;
-    if (!PickedImageDetails.matchID && !PickedImageDetails.matchClass && !PickedImageDetails.matchSrc) PickedImageDetails.matchHref = PickedImageDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
+    PickedImageDetails.matchSrc = PickedImageDetails.imageElement.search(new RegExp("src\\s*=\\s*\"", "g")) != -1;
+    if (!PickedImageDetails.matchSrc) PickedImageDetails.matchID = PickedImageDetails.imageElement.search(new RegExp("id\\s*=\\s*\"", "g")) != -1;
+    if (!PickedImageDetails.matchSrc && !PickedImageDetails.matchID) PickedImageDetails.matchClass = PickedImageDetails.imageElement.search(new RegExp("class\\s*=\\s*\"", "g")) != -1;
+    if (!PickedImageDetails.matchSrc && !PickedImageDetails.matchID && !PickedImageDetails.matchClass) PickedImageDetails.matchHref = PickedImageDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
 }
 
 function ProcessImages()
@@ -312,9 +296,9 @@ function ProcessImages()
             var imgId = ImagesToReplace[i].imgId;
             ImgTable.insertRow(ImgTable.rows.length - 1);
             const RemoveInlineSrcData = /(src\s*=\s*\"data:.*?)\"(.*)/g;
-            var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data - cannot be used for src matching>\"$2");
+            var scrubbedElement = ImagesToReplace[i].imageElement.replace(RemoveInlineSrcData, "src=\"<inline data>\"$2");
             const RemoveInlineSrcSetData = /(srcset\s*=\s*\".*?)\"/g;
-            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data - cannot be used for src matching&gt;", "<i>&lt;inline data - cannot be used for src matching&gt;</i>");
+            scrubbedElement = htmlEscape(scrubbedElement.replace(RemoveInlineSrcSetData, "")).replace("&lt;inline data&gt;", "<i>&lt;inline data&gt;</i>");
             
             ImgTable.rows[ImgTable.rows.length - 2].innerHTML = 
              "<td ><div id=\"imageCropDiv_" + imgId + "\"><img id=\"imageCanvas_" + imgId + "\"></img></div></td>" + 
@@ -324,7 +308,7 @@ function ProcessImages()
              "<td style=\"border-left: 1px dashed gray\">" + 
                 (scrubbedElement.search(new RegExp("class\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchClass" + imgId + "\" name=\"matchClass" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\">" + 
-                (scrubbedElement.search(new RegExp("(src)\\s*=\\s*&quot;((?!<i>&lt;inline data - cannot be used for src matching&gt;</i>).*?)&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchSrc" + imgId + "\" name=\"matchSrc" + i + "\"></center>") + "</td>" +
+                (scrubbedElement.search(new RegExp("src\\s*=\\s*&quot;", "g")) == -1 ? "" : "<center><input type=\"checkbox\" id=\"matchSrc" + imgId + "\" name=\"matchSrc" + i + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\"><center>" +
                 (scrubbedElement.search(new RegExp("href\\s*=\\s*&quot;", "g")) == -1 ? "" : "<input type=\"checkbox\" id=\"matchHref" + imgId + "\" name=\"matchHref" + imgId + "\"></center>") + "</td>" +
              "<td style=\"border-left: 1px dashed gray\" valign=center><center>" +
