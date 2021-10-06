@@ -4,10 +4,18 @@ document.addEventListener('mouseup', function(mousePos){
     var p = {clientX: mousePos.clientX, clientY: mousePos.clientY};
     var elems = document.elementsFromPoint(mousePos.clientX, mousePos.clientY);
     var elem = null;
+
+    console.log(elems);
+
+
     for (var i = 0; i < elems.length; i++)
     {
       if (elems[i].tagName.toLowerCase() == "img" || 
-          elems[i].tagName.toLowerCase() == "svg")
+          elems[i].tagName.toLowerCase() == "svg" ||
+          (elems.find(e=>e.tagName.toLowerCase() == "img") == undefined && 
+           elems.find(e=>e.tagName.toLowerCase() == "svg") == undefined && 
+           elems[i].tagName.toLowerCase() == "div" && 
+           elems[i].className != "ScreenScrubberPickerOverlay"))
       {
             var originalI = i;
             if (elems[i].tagName.toLowerCase() == "svg")
