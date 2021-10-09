@@ -5,9 +5,6 @@ document.addEventListener('mouseup', function(mousePos){
     var elems = document.elementsFromPoint(mousePos.clientX, mousePos.clientY);
     var elem = null;
 
-    console.log(elems);
-
-
     for (var i = 0; i < elems.length; i++)
     {
       if (elems[i].tagName.toLowerCase() == "img" || 
@@ -39,11 +36,18 @@ document.addEventListener('mouseup', function(mousePos){
                       imgWidth: window.innerWidth,
                       pixelRatio: window.devicePixelRatio,
                       from: 'mouseup'};
+            try {
               chrome.runtime.sendMessage(msg, function(response) {
-                console.log("here");
                 document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection
+                document.body.style.cursor = "default";
               });
-            document.body.style.cursor = "default";
+            }
+            catch (e)
+            {
+              document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection
+              document.body.style.cursor = "default";
+              alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
+            }
             i = elems.length;
           }
       }
