@@ -2,10 +2,6 @@ function createScreenshot(callback) {
   chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);
 }
 
-function ReplaceSelectedText() {
-  alert(0);
-}
-
 chrome.runtime.onInstalled.addListener(()=>{
   chrome.contextMenus.create({
     title:"Pick an image on the current page to replace",
