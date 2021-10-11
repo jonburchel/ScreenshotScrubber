@@ -14,6 +14,12 @@ chrome.runtime.onInstalled.addListener(()=>{
     contexts: ["selection"],
     id: "ScreenScrubberReplaceSelectionMenu"
   });
+
+  chrome.contextMenus.create({
+    title:"Replace image with Screenshot Scrubber",
+    contexts: ["image"],
+    id: "ScreenScrubberReplaceImageMenu"
+  });
 });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab){
@@ -29,6 +35,12 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
         files: ["replaceselection.js"]
       });
   } 
+  if(info.menuItemId == "ScreenScrubberReplaceImageMenu")
+  {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+      chrome.tabs.sendMessage(tabs[0].id, {action: "ReplaceImage", info: info}, function(response) {});  
+    });
+  }
 });
 
 chrome.action.onClicked.addListener((tab) => {
