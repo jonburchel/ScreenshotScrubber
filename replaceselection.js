@@ -66,7 +66,7 @@ var divDialog = document.body.insertBefore(document.createElement('div'), docume
 divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
-divDialog.innerHTML = "<div style='border: solid gray 2px; position:absolute; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px; width: 400px; height: 170px; background-color: cornflowerblue;'>\
+divDialog.innerHTML = "<div style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px; width: 400px; height: 170px; background-color: cornflowerblue;'>\
     <table width=100% height=100%>\
         <tr style='border-bottom: solid gray 2px; height: 30px; font-size: large;'><td width=100% colspan=2>\
             &nbsp;<img width=24 style='position:relative; top:4px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:-4px; left: 8px;'>Screenshot Scrubber - Replace Text</b></td></tr>\
