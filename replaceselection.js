@@ -57,9 +57,9 @@ function findAndReplace(searchText, replacement, searchNode) {
     } catch(e) {} // ignore any errors caused by script replacement on the page
 }
 
+
 var mousePos = getSelectionCoords(window);
 var elems = document.elementsFromPoint(mousePos.x, mousePos.y);
-
 var foundCount = Array.from(document.body.innerHTML.matchAll(new RegExp(escapeRegex(document.getSelection().toString()), 'g'))).length;
 var searchText = document.getSelection().toString();
 var divDialog = document.body.insertBefore(document.createElement('div'), document.body.firstChild);

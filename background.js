@@ -16,7 +16,6 @@ chrome.runtime.onInstalled.addListener(()=>{
   });
 });
 
-
 chrome.contextMenus.onClicked.addListener(function(info, tab){
   if (info.menuItemId == "ScreenScrubberPickImageMenu") {
     chrome.scripting.executeScript({
@@ -37,6 +36,16 @@ chrome.action.onClicked.addListener((tab) => {
     target: {tabId: tab.id},
     files: ['content.js']
   });
+});
+
+chrome.commands.onCommand.addListener((c, tab)=>{
+  if (c=="ReplaceSelection")
+  {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      files: ["replaceselection.js"]
+    });
+  }
 });
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) 
