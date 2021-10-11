@@ -75,23 +75,23 @@ var divDialog = document.body.insertBefore(document.createElement('div'), docume
 divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
-divDialog.innerHTML = "<div style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
+divDialog.innerHTML = "<div class='remove-all-styles' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
                                 400px; height: 170px; background-color: cornflowerblue;font-family: Segoe UI;font-weight: 700;'>\
-    <table width=100% height=100%>\
-        <tr style='border-bottom: solid gray 2px; height: 30px; font-size: large;'><td width=100% colspan=2 style='text-align:left;'>\
-            &nbsp;<img width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:2px; left: 8px;'>Screenshot Scrubber - Replace Text</b></td></tr>\
-        <tr style='height: 20px;font-size:small;'><td>&nbsp;&nbsp;<b>Search for:</b></td><td><input type=text style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" + 
+    <table class='remove-all-styles' width=100% height=100%>\
+        <tr class='remove-all-styles' style='border-bottom: solid gray 2px; height: 30px; font-size: large;'><td width=100% colspan=2 style='text-align:left;'>\
+            &nbsp;<img class='remove-all-styles' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:2px; left: 8px;'>Screenshot Scrubber - Replace Text</b></td></tr>\
+        <tr class='remove-all-styles' style='height: 20px;font-size:small;'><td class='remove-all-styles' >&nbsp;&nbsp;<b>Search for:</b></td><td class='remove-all-styles' ><input type=text style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" + 
              htmlEscape(document.getSelection().toString()) + "'/></td></tr>\
-        <tr style='height: 20px;font-size:small;'><td>&nbsp;&nbsp;<b>Replace with:</b></td><td><input type=text style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/></td></tr>\
-        <tr><td colspan=2 style='text-align:right;font-size:small;'>\
+        <tr class='remove-all-styles' style='height: 20px;font-size:small;'><td class='remove-all-styles' >&nbsp;&nbsp;<b>Replace with:</b></td><td class='remove-all-styles' ><input class='remove-all-styles' type=text style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/></td></tr>\
+        <tr class='remove-all-styles' ><td class='remove-all-styles' colspan=2 style='text-align:right;font-size:small;'>\
             <div id='ScreenshotScrubberFoundCountDiv'>" + 
-                (foundCount <= 1 || searchText == "" ? "" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>") + 
+                (foundCount <= 1 || searchText == "" ? "<br>" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input class='remove-all-styles' type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>") + 
             "</div>\
-            <b>Save to default configuration:&nbsp;</b><input type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
+            <b>Save to default configuration:&nbsp;</b><input class='remove-all-styles' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
         </td></tr>\
-        <tr><td colspan=2 style='text-align:right;'>\
-            <input type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px'>\
-            <input type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px'>&nbsp;&nbsp;&nbsp;\
+        <tr class='remove-all-styles' ><td class='remove-all-styles' colspan=2 style='text-align:right;'>\
+            <input class='remove-all-styles' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px'>\
+            <input class='remove-all-styles' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px'>&nbsp;&nbsp;&nbsp;\
         </td></tr>\
     </table>\
 </div>";
@@ -101,7 +101,7 @@ document.getElementById("ScreenshotScrubberCancelButton").addEventListener("clic
 document.getElementById("ScreenshotScrubberSearchFor").addEventListener("input", ()=> {
     searchText = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
     foundCount = Array.from(document.body.innerHTML.matchAll(new RegExp(escapeRegex(searchText), 'g'))).length;
-    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = (foundCount <= 1 || searchText == "" ? "" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>");
+    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = (foundCount <= 1 || searchText == "" ? "<br>" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input class='remove-all-styles' type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>");
 });
 document.getElementById("ScreenshotScrubberSearchFor").focus();
 document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=> {
