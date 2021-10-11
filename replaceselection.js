@@ -72,9 +72,9 @@ divDialog.innerHTML = "<div style='border: solid gray 2px; position:absolute; to
             &nbsp;<img width=24 style='position:relative; top:4px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:-4px; left: 8px;'>Screenshot Scrubber - Replace Text</b></td></tr>\
         <tr style='height: 20px;'><td>&nbsp;&nbsp;<b>Search for:</b></td><td><input type=text style='padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" +  document.getSelection().toString() + "'/></td></tr>\
         <tr style='height: 20px;'><td>&nbsp;&nbsp;<b>Replace with:</b></td><td><input type=text style='padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/></td></tr>\
-        <tr><td colspan=2>" + 
-            (foundCount <= 1 ? "" : "&nbsp;&nbsp;<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input type=checkbox checked id='ScreenshotScrubberReplaceAll'/><br>") +
-            "&nbsp;&nbsp;<b>Save to default configuration:&nbsp;</b><input type=checkbox checked id=ScreenshotScrubberSaveToConfig/>\
+        <tr><td colspan=2 style='text-align:right;'>" + 
+            (foundCount <= 1 ? "" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>") +
+            "<b>Save to default configuration:&nbsp;</b><input type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
         </td></tr>\
         <tr><td colspan=2 style='text-align:right;'>\
             <input type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px'>\
@@ -88,7 +88,25 @@ document.getElementById("ScreenshotScrubberCancelButton").addEventListener("clic
 document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=> {
     var replaceAll = (document.getElementById("ScreenshotScrubberReplaceAll") == null ? false : document.getElementById("ScreenshotScrubberReplaceAll").checked);
     var replaceText = document.getElementById("ScreenshotScrubberReplace").value;
+    var updateConfig = document.getElementById("ScreenshotScrubberSaveToConfig").checked;
     document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+    if(updateConfig) {
+        chrome.storage.sync.get("ConfigArray", function(ca) {
+            if (ca.ConfigArray == null)
+            {
+                var DefaultSettings = new Array(5);
+                DefaultSettings[0] = ["Microsoft", "Contoso, Ltd."];
+                DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678"];
+                DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
+                DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
+                DefaultSettings[4] = [searchText, replaceText];
+                chrome.storage.sync.set({ConfigArray: DefaultSettings});
+            }
+            else
+            ca.ConfigArray.push([searchText, replaceText]);
+            chrome.storage.sync.set({ConfigArray: ca.ConfigArray});
+        });
+    }
     if (replaceAll)
         findAndReplace(searchText, replaceText, document.body);
     else
