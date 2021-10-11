@@ -48,7 +48,7 @@
     },
     "web_accessible_resources": [
       {
-        "resources": ["/images/DocScreenshotScrubberIcon32.png"],
+        "resources": ["/images/DocScreenshotScrubberIcon32.png", "styles.css"],
         "matches": ["http://*/*", "https://*/*"]
       }
     ]
