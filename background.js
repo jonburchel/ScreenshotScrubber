@@ -79,14 +79,20 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
           '&pixelRatio=' + msg.pixelRatio +
           '&screenImg=' + dataURL;
         if(tabs.length > 0)
-        {
             chrome.tabs.update(tabs[0].id, { url : qryUrl });
-        }
         else
           chrome.tabs.create({ url: qryUrl, active: false }, function(tab) {
             chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 775, width: 700});
           });
       });           
+    });
+  }
+  if (msg.from == "replaceText")
+  {
+    chrome.tabs.query({url:[chrome.runtime.getURL('options.html') + "?imagesRendered=true"]},function(tabs)
+    {
+      if(tabs.length > 0)
+          chrome.tabs.update(tabs[0].id, { url : chrome.runtime.getURL('options.html') + "?imagesRendered=true"  });
     });
   }
 });

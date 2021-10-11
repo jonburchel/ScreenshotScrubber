@@ -100,11 +100,14 @@ document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("cli
                 DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
                 DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
                 DefaultSettings[4] = [searchText, replaceText];
-                chrome.storage.sync.set({ConfigArray: DefaultSettings});
             }
             else
-            ca.ConfigArray.push([searchText, replaceText]);
-            chrome.storage.sync.set({ConfigArray: ca.ConfigArray});
+            {
+                ca.ConfigArray.push([searchText, replaceText]);
+                chrome.storage.sync.set({ConfigArray: ca.ConfigArray}, ()=>{
+                    chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
+                });
+            }
         });
     }
     if (replaceAll)
@@ -118,4 +121,5 @@ document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("cli
                 i = elems.length;
             }
         }    
+    
 });
