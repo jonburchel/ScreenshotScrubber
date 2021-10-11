@@ -28,5 +28,11 @@
       "32": "/images/DocScreenshotScrubberIcon32.png",
       "48": "/images/DocScreenshotScrubberIcon48.png",
       "128": "/images/DocScreenshotScrubberIcon128.png"
-    }
+    },
+    "web_accessible_resources": [
+      {
+        "resources": ["/images/DocScreenshotScrubberIcon32.png"],
+        "matches": ["http://*/*", "https://*/*"]
+      }
+    ]
   }
