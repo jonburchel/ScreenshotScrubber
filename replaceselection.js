@@ -95,9 +95,25 @@ divDialog.innerHTML = "<div class='remove-all-styles' style='border: solid gray 
         </td></tr>\
     </table>\
 </div>";
+
 document.getElementById("ScreenshotScrubberCancelButton").addEventListener("click", ()=> {
+    document.removeEventListener("keydown", ProcessKeyDown, false);
     document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
 });
+
+function ProcessKeyDown(kv)
+{
+    if (kv.keyCode == 27)
+    {
+        document.removeEventListener("keydown", ProcessKeyDown, false);
+        document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+    }
+    if (kv.keyCode == 13)
+        document.getElementById("ScreenshotScrubberReplaceButton").click();
+}
+
+document.addEventListener("keydown", ProcessKeyDown);
+
 document.getElementById("ScreenshotScrubberSearchFor").addEventListener("input", ()=> {
     searchText = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
     foundCount = Array.from(document.body.innerHTML.matchAll(new RegExp(escapeRegex(searchText), 'g'))).length;
@@ -109,6 +125,7 @@ document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("cli
     var replaceText = document.getElementById("ScreenshotScrubberReplace").value;
     var updateConfig = document.getElementById("ScreenshotScrubberSaveToConfig").checked;
     document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+    document.removeEventListener("keydown", ProcessKeyDown, false);
     if(updateConfig) {
         chrome.storage.sync.get("ConfigArray", function(ca) {
             console.log(ca);
