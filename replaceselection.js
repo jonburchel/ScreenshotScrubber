@@ -84,13 +84,24 @@ divDialog.id = divDialog.className;
 divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
                                 400px; height: 170px; background-color: cornflowerblue;font-family: Segoe UI;font-weight: 700;'>\
     <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
-        <tr class='ScreenshotScrubberDialogStyle' style='border-bottom: solid gray 2px; height: 30px; font-size: large;'><td class='ScreenshotScrubberDialogStyle' width=100% colspan=2 style='text-align:left;'>\
-            &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:2px; left: 8px;'>Screenshot Scrubber - Replace Text</b></td></tr>\
-        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'><td class='ScreenshotScrubberDialogStyle' >&nbsp;&nbsp;<b>Search for:</b></td><td class='ScreenshotScrubberDialogStyle' >\
-            <input class='ScreenshotScrubberDialogStyle' type=text style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" + 
-             htmlEscape(document.getSelection().toString()) + "'/></td></tr>\
-        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'><td class='ScreenshotScrubberDialogStyle' >&nbsp;&nbsp;<b>Replace with:</b></td><td class='ScreenshotScrubberDialogStyle' >\
-            <input class='ScreenshotScrubberDialogStyle' type=text style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/></td></tr>\
+        <tr class='ScreenshotScrubberDialogStyle' style='height: 30px; font-size: large;'>\
+            <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;'>\
+                &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:2px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
+            </th></tr>\
+        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
+            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;'>&nbsp;&nbsp;<b>Search for:</b></td>\
+            <td class='ScreenshotScrubberDialogStyle'>\
+                <input class='ScreenshotScrubberDialogStyle' type=text \
+                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" + 
+                htmlEscape(document.getSelection().toString()) + "'/>\
+            </td>\
+        </tr>\
+        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
+            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;'>&nbsp;&nbsp;<b>Replace with:</b></td><td class='ScreenshotScrubberDialogStyle' >\
+                <input class='ScreenshotScrubberDialogStyle' type=text \
+                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/>\
+            </td>\
+        </tr>\
         <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;font-size:small;'>\
             <div style='all:revert;' id='ScreenshotScrubberFoundCountDiv'>" + 
                 (foundCount <= 1 || searchText == "" ? "<br>" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b>\
