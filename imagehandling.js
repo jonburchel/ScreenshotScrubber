@@ -281,7 +281,7 @@ function ProcessImages()
         else
         {
             //removes display:none and sets bgcolor. this hides the refresh flash...
-            document.body.style = "background-color:cornflowerblue;"; 
+            document.body.style = "background:rgba(85, 126, 200,.75);"; 
         }
 
         ImgTable = document.getElementById("ImageList");
