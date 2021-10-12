@@ -1,4 +1,7 @@
 .ScreenshotScrubberDialogStyle {
     all: revert;
+    min-width: 0px;
+    min-height: 0px;
+    vertical-align: top;
   }
 
