@@ -35,15 +35,16 @@ function PickImage(mousePos)
                     imgWidth: window.innerWidth,
                     pixelRatio: window.devicePixelRatio,
                     from: 'mouseup'};
+          var PickerOverlay = document.getElementById("ScreenScrubberPickerOverlay");
           try {
             chrome.runtime.sendMessage(msg, function(response) {
-              document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection
+              if (PickerOverlay != undefined) PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
               document.body.style.cursor = "default";
             });
           }
           catch (e)
           {
-            document.body.firstChild.remove(); // remove the overlay <div> we created for crosshairs during item selection
+            if (PickerOverlay != undefined) PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
             document.body.style.cursor = "default";
             alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
           }

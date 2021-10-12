@@ -149,6 +149,7 @@ function DelImg(e)
     {
         ImgTable.style.display = "none";
         document.getElementById("NoImagesText").style.display = "inline";
+        document.getElementById("AfterImagesText").style.display = "none";
     }
     FlashSaved();
 }
@@ -289,6 +290,7 @@ function ProcessImages()
         {
             ImgTable.style.display = "none";
             document.getElementById("NoImagesText").style.display = "inline";
+            document.getElementById("AfterImagesText").style.display = "none";
         }
 
         for (var i = 0; i < ImagesToReplace.length; i++)
@@ -410,6 +412,8 @@ function ProcessImages()
                 
             }
         }
+        if (ImagesToReplace.length > 0) 
+            document.getElementById("AfterImagesText").style.display = "inline";
 
         PageLoading = false;
     });
