@@ -81,7 +81,7 @@ divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;he
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
 divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
-                                400px; height: 170px; border-radius: 6px; background-color: cornflowerblue;font-family: Segoe UI;font-weight: 700;background: rgba(85, 126, 200,.75);backdrop-filter: blur(3px);'>\
+                                400px; height: 170px; border-radius: 6px; font-weight: 700;background: rgba(85, 126, 200,.75);backdrop-filter: blur(3px);'>\
     <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
         <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
             <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
@@ -93,16 +93,16 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog'
             &nbsp;&nbsp;<b>Search for:</b></td>\
             <td class='ScreenshotScrubberDialogStyle'>\
                 <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
-                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' \
+                    style='width: 297px; margin-bottom: 5px; margin-top: 5px;border-width: 1px;padding: 0px; font-size:small;' \
                     size=45 id='ScreenshotScrubberSearchFor' value='" + searchText + "'/>\
             </td>\
         </tr>\
-        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;background:none;'>\
-            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;background:none;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
+            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
             &nbsp;&nbsp;<b>Replace with:</b></td>\
-            <td class='ScreenshotScrubberDialogStyle' style='background:none;'>\
+            <td class='ScreenshotScrubberDialogStyle' style=''>\
                 <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
-                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' \
+                    style='width: 297px; margin-bottom: 5px; margin-top: 5px;border-width: 1px;padding: 0px; font-size:small;'' \
                     size=45 id='ScreenshotScrubberReplace'/>\
             </td>\
         </tr>\
@@ -114,9 +114,9 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog'
             <b style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>Save to default configuration:&nbsp;</b>\
                     <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
         </td></tr>\
-        <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;background:none;'>\
-            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px'>\
-            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px'>&nbsp;&nbsp;&nbsp;\
+        <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>\
+            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px;background:cornflowerblue;'>\
+            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px;background:cornflowerblue;'>&nbsp;&nbsp;&nbsp;\
         </td></tr>\
     </table>\
 </div>";
