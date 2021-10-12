@@ -72,7 +72,6 @@ link.type = "text/css";
 link.rel = "stylesheet";
 document.getElementsByTagName("head")[0].appendChild(link);
 
-
 var mousePos = getSelectionCoords(window);
 var elems = document.elementsFromPoint(mousePos.x, mousePos.y);
 var searchText = document.getSelection().toString().trim();
@@ -81,7 +80,7 @@ var divDialog = document.body.insertBefore(document.createElement('div'), docume
 divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
-divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
+divDialog.innerHTML = "<div id='divDialog' class='ScreenshotScrubberDialogStyle' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
                                 400px; height: 170px; border-radius: 6px; background-color: cornflowerblue;font-family: Segoe UI;font-weight: 700;background: rgba(85, 126, 200,.65);backdrop-filter: blur(3px);'>\
     <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
         <tr class='ScreenshotScrubberDialogStyle' style='height: 30px; font-size: large;'>\
@@ -119,6 +118,31 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' style='border:
         </td></tr>\
     </table>\
 </div>";
+
+var DivOffset = [0,0];
+function divMove(e)
+{
+        var div = document.getElementById('divDialog');
+        div.style.position = 'fixed';
+        div.style.top = ((e.clientY - DivOffset[1]) + 'px');
+        div.style.left = ((e.clientX - DivOffset[0]) + 'px');
+}
+
+function mouseUp(e)
+{
+    window.removeEventListener('mousemove', divMove, true);
+}
+
+function mouseDown(e)
+{
+  DivOffset = [e.offsetX, e.offsetY];
+  window.addEventListener('mousemove', divMove, true);
+}
+
+
+
+document.getElementById('divDialog').addEventListener('mousedown', mouseDown, false);
+window.addEventListener('mouseup', mouseUp, false);
 
 document.getElementById("ScreenshotScrubberCancelButton").addEventListener("click", ()=> {
     document.removeEventListener("keydown", ProcessKeyDown, false);
