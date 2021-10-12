@@ -80,10 +80,10 @@ var divDialog = document.body.insertBefore(document.createElement('div'), docume
 divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
-divDialog.innerHTML = "<div id='divDialog' class='ScreenshotScrubberDialogStyle' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
+divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
                                 400px; height: 170px; border-radius: 6px; background-color: cornflowerblue;font-family: Segoe UI;font-weight: 700;background: rgba(85, 126, 200,.65);backdrop-filter: blur(3px);'>\
     <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
-        <tr class='ScreenshotScrubberDialogStyle' style='height: 30px; font-size: large;'>\
+        <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
             <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;'>\
                 &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/>\
                 <b style='position:relative; top:7px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
@@ -141,7 +141,7 @@ function mouseDown(e)
 
 
 
-document.getElementById('divDialog').addEventListener('mousedown', mouseDown, false);
+document.getElementById('ScreenshotScrubberDialogHeaderRow').addEventListener('mousedown', mouseDown, false);
 window.addEventListener('mouseup', mouseUp, false);
 
 document.getElementById("ScreenshotScrubberCancelButton").addEventListener("click", ()=> {
