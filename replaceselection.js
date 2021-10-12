@@ -19,9 +19,9 @@ function getSelectionCoords(win) {
                 rects = range.getClientRects();
                 if (rects.length > 0) {
                     rect = rects[0];
-                }
-                x = rect.left;
-                y = rect.top;
+                    x = rect.left;
+                    y = rect.top;
+                }            
             }
             // Fall back to inserting a temporary element
             if (x == 0 && y == 0) {
