@@ -93,14 +93,16 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' style='border:
             <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;'>&nbsp;&nbsp;<b>Search for:</b></td>\
             <td class='ScreenshotScrubberDialogStyle'>\
                 <input class='ScreenshotScrubberDialogStyle' type=text \
-                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" + 
-                htmlEscape(document.getSelection().toString()) + "'/>\
+                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' \
+                    size=45 id='ScreenshotScrubberSearchFor' value='" + searchText + "'/>\
             </td>\
         </tr>\
-        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
-            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;'>&nbsp;&nbsp;<b>Replace with:</b></td><td class='ScreenshotScrubberDialogStyle' >\
+        <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;background:none;'>\
+            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;background:none;'>&nbsp;&nbsp;<b>Replace with:</b></td>\
+            <td class='ScreenshotScrubberDialogStyle' style='background:none;'>\
                 <input class='ScreenshotScrubberDialogStyle' type=text \
-                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/>\
+                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' \
+                    size=45 id='ScreenshotScrubberReplace'/>\
             </td>\
         </tr>\
         <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;font-size:small;'>\
@@ -111,7 +113,7 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' style='border:
             <b>Save to default configuration:&nbsp;</b>\
                     <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
         </td></tr>\
-        <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>\
+        <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;background:none;'>\
             <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px'>\
             <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px'>&nbsp;&nbsp;&nbsp;\
         </td></tr>\
