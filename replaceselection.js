@@ -92,7 +92,7 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog'
             <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
             &nbsp;&nbsp;<b>Search for:</b></td>\
             <td class='ScreenshotScrubberDialogStyle'>\
-                <input class='ScreenshotScrubberDialogStyle' type=text \
+                <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
                     style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' \
                     size=45 id='ScreenshotScrubberSearchFor' value='" + searchText + "'/>\
             </td>\
@@ -101,7 +101,7 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog'
             <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;background:none;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
             &nbsp;&nbsp;<b>Replace with:</b></td>\
             <td class='ScreenshotScrubberDialogStyle' style='background:none;'>\
-                <input class='ScreenshotScrubberDialogStyle' type=text \
+                <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
                     style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' \
                     size=45 id='ScreenshotScrubberReplace'/>\
             </td>\
