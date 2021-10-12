@@ -6,3 +6,28 @@
     line-height: 17px;
   }
 
+  #ScreenScrubberReplacePromptOverlay th, #ScreenScrubberReplacePromptOverlay td, #ScreenScrubberReplacePromptOverlay tr {
+    padding: 0px;
+    margin: 5px;
+    background: none;
+    border: none;
+    font-family: Segoe UI;
+    color: black;
+  }
+
+  #ScreenScrubberReplacePromptOverlay table
+  {
+    margin: 0px;
+    height: 170px;
+  }
+
+  #ScreenScrubberReplacePromptOverlay input
+  {
+    font-family: Segoe UI;
+    margin-left: 3px;
+    margin-right: 3px;
+    border-radius: 6px;
+  }
+
+
+

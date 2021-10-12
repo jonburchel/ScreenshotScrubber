@@ -72,7 +72,6 @@ link.type = "text/css";
 link.rel = "stylesheet";
 document.getElementsByTagName("head")[0].appendChild(link);
 
-
 var mousePos = getSelectionCoords(window);
 var elems = document.elementsFromPoint(mousePos.x, mousePos.y);
 var searchText = document.getSelection().toString().trim();
@@ -81,41 +80,71 @@ var divDialog = document.body.insertBefore(document.createElement('div'), docume
 divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
-divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
-                                400px; height: 170px; background-color: cornflowerblue;font-family: Segoe UI;font-weight: 700;'>\
+divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
+                                400px; height: 170px; border-radius: 6px; font-weight: 700;background: rgba(85, 126, 200,.75);backdrop-filter: blur(3px);'>\
     <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
-        <tr class='ScreenshotScrubberDialogStyle' style='height: 30px; font-size: large;'>\
-            <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;'>\
-                &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/><b style='position:relative; top:2px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
+        <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
+            <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/>\
+                <b style='position:relative; top:7px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
             </th></tr>\
         <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
-            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;'>&nbsp;&nbsp;<b>Search for:</b></td>\
+            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+            &nbsp;&nbsp;<b>Search for:</b></td>\
             <td class='ScreenshotScrubberDialogStyle'>\
-                <input class='ScreenshotScrubberDialogStyle' type=text \
-                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;' size=45 id='ScreenshotScrubberSearchFor' value='" + 
-                htmlEscape(document.getSelection().toString()) + "'/>\
+                <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
+                    style='width: 297px; margin-bottom: 5px; margin-top: 5px;border-width: 1px;padding: 0px; font-size:small;' \
+                    size=45 id='ScreenshotScrubberSearchFor' value='" + searchText + "'/>\
             </td>\
         </tr>\
         <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
-            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;'>&nbsp;&nbsp;<b>Replace with:</b></td><td class='ScreenshotScrubberDialogStyle' >\
-                <input class='ScreenshotScrubberDialogStyle' type=text \
-                    style='margin-bottom: 5px; margin-top: 5px;border-width: 1px;font-family: Segoe UI;padding: 0px; font-size:small;'' size=45 id='ScreenshotScrubberReplace'/>\
+            <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+            &nbsp;&nbsp;<b>Replace with:</b></td>\
+            <td class='ScreenshotScrubberDialogStyle' style=''>\
+                <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
+                    style='width: 297px; margin-bottom: 5px; margin-top: 5px;border-width: 1px;padding: 0px; font-size:small;'' \
+                    size=45 id='ScreenshotScrubberReplace'/>\
             </td>\
         </tr>\
         <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;font-size:small;'>\
             <div style='all:revert;' id='ScreenshotScrubberFoundCountDiv'>" + 
-                (foundCount <= 1 || searchText == "" ? "<br>" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b>\
+                (foundCount <= 1 || searchText == "" ? "<br>" : "<b style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>Replace all " + foundCount + " occurrences:&nbsp;</b>\
                  <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>") + 
             "</div>\
-            <b>Save to default configuration:&nbsp;</b>\
+            <b style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>Save to default configuration:&nbsp;</b>\
                     <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
         </td></tr>\
-        <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>\
-            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px'>\
-            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px'>&nbsp;&nbsp;&nbsp;\
+        <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>\
+            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px;background:cornflowerblue;'>\
+            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px;background:cornflowerblue;'>&nbsp;&nbsp;&nbsp;\
         </td></tr>\
     </table>\
 </div>";
+
+var DivOffset = [0,0];
+function divMove(e)
+{
+        var div = document.getElementById('divDialog');
+        div.style.position = 'fixed';
+        div.style.top = ((e.clientY - DivOffset[1]) + 'px');
+        div.style.left = ((e.clientX - DivOffset[0]) + 'px');
+}
+
+function mouseUp(e)
+{
+    window.removeEventListener('mousemove', divMove, true);
+}
+
+function mouseDown(e)
+{
+  DivOffset = [e.offsetX, e.offsetY];
+  window.addEventListener('mousemove', divMove, true);
+}
+
+
+
+document.getElementById('ScreenshotScrubberDialogHeaderRow').addEventListener('mousedown', mouseDown, false);
+window.addEventListener('mouseup', mouseUp, false);
 
 document.getElementById("ScreenshotScrubberCancelButton").addEventListener("click", ()=> {
     document.removeEventListener("keydown", ProcessKeyDown, false);
@@ -138,7 +167,7 @@ document.addEventListener("keydown", ProcessKeyDown);
 document.getElementById("ScreenshotScrubberSearchFor").addEventListener("input", ()=> {
     searchText = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
     foundCount = Array.from(document.body.innerHTML.matchAll(new RegExp(escapeRegex(searchText), 'g'))).length;
-    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = (foundCount <= 1 || searchText == "" ? "<br>" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>");
+    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = (foundCount <= 1 || searchText == "" ? "<br>" : "<b style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>Replace all " + foundCount + " occurrences:&nbsp;</b><input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>");
 });
 var SearchFor = document.getElementById("ScreenshotScrubberSearchFor");
 var ReplaceWith = document.getElementById("ScreenshotScrubberReplace");
