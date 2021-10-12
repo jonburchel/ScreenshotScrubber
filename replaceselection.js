@@ -115,8 +115,8 @@ divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog'
                     <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
         </td></tr>\
         <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>\
-            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px;background:cornflowerblue;'>\
-            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px;background:cornflowerblue;'>&nbsp;&nbsp;&nbsp;\
+            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberReplaceButton value=Replace style='width:70px;background:cornflowerblue;color:white;'>\
+            <input class='ScreenshotScrubberDialogStyle' type=button id=ScreenshotScrubberCancelButton value=Cancel style='width:70px;background:cornflowerblue;color:white;'>&nbsp;&nbsp;&nbsp;\
         </td></tr>\
     </table>\
 </div>";

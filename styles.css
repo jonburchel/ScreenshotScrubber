@@ -12,7 +12,7 @@
     background: none;
     border: none;
     font-family: Segoe UI;
-    color: black;
+    color: white;
   }
 
   #ScreenScrubberReplacePromptOverlay table
@@ -26,7 +26,8 @@
     font-family: Segoe UI;
     margin-left: 3px;
     margin-right: 3px;
-    border-radius: 6px;
+    border-radius: 3px;
+    text-indent: 3px;
   }
 
 
