@@ -140,7 +140,12 @@ document.getElementById("ScreenshotScrubberSearchFor").addEventListener("input",
     foundCount = Array.from(document.body.innerHTML.matchAll(new RegExp(escapeRegex(searchText), 'g'))).length;
     document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = (foundCount <= 1 || searchText == "" ? "<br>" : "<b>Replace all " + foundCount + " occurrences:&nbsp;</b><input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberReplaceAll'/>&nbsp;&nbsp;<br>");
 });
-document.getElementById("ScreenshotScrubberSearchFor").focus();
+var SearchFor = document.getElementById("ScreenshotScrubberSearchFor");
+var ReplaceWith = document.getElementById("ScreenshotScrubberReplace");
+if (SearchFor.value.trim() == "") 
+    SearchFor.focus();
+else
+    ReplaceWith.focus();
 document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=> {
     var replaceAll = (document.getElementById("ScreenshotScrubberReplaceAll") == null ? false : document.getElementById("ScreenshotScrubberReplaceAll").checked);
     var replaceText = document.getElementById("ScreenshotScrubberReplace").value;

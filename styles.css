@@ -2,6 +2,7 @@
     all: revert;
     min-width: 0px;
     min-height: 0px;
-    vertical-align: top;
+    vertical-align: middle;
+    line-height: 17px;
   }
 
