@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener(()=>{
   });
 
   chrome.contextMenus.create({
-    title:"Replace selected text with Screenshot Scrubber",
+    title:"Replace selected text with Screenshot Scrubber (Shift+Ctrl+H)",
     contexts: ["selection"],
     id: "ScreenScrubberReplaceSelectionMenu"
   });
