@@ -81,7 +81,7 @@ divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;he
 divDialog.className = "ScreenScrubberReplacePromptOverlay";
 divDialog.id = divDialog.className;
 divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
-                                400px; height: 170px; border-radius: 6px; font-weight: 700;background: rgba(85, 126, 200,.75);backdrop-filter: blur(3px);'>\
+                                400px; height: 170px; border-radius: 6px; font-weight: 700;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
     <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
         <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
             <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
