@@ -228,7 +228,9 @@ function ProcessImages()
     var addImgRowBttn = document.getElementById("AddImageRowButton");
     addImgRowBttn.addEventListener("click", function (e)
     {
-        alert("To add new images for replacement, browse to a page with the image, then right click the Extension icon in the toolbar or on the Extensions dropdown, to choose Pick an image on the current page to replace.");
+        chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, ()=>{
+            alert("Select an image on the last active tab page to replace.");
+        });
     });
     var PickedElementToReplace = GetQueryVariable("imageElement");
     if (PickedElementToReplace != undefined)

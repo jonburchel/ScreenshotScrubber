@@ -183,7 +183,6 @@ document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("cli
     document.removeEventListener("keydown", ProcessKeyDown, false);
     if(updateConfig) {
         chrome.storage.sync.get("ConfigArray", function(ca) {
-            console.log(ca);
             if (ca.ConfigArray == null)
             {
                 var DefaultSettings = new Array(5);

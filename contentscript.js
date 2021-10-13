@@ -3,15 +3,16 @@ function PickImage(mousePos)
   var p = {clientX: mousePos.clientX, clientY: mousePos.clientY};
   var elems = document.elementsFromPoint(mousePos.clientX, mousePos.clientY);
   var elem = null;
-
   for (var i = 0; i < elems.length; i++)
   {
     if (elems[i].tagName.toLowerCase() == "img" || 
         elems[i].tagName.toLowerCase() == "svg" ||
+        elems[i].tagName.toLowerCase() == "span" ||
         (elems.find(e=>e.tagName.toLowerCase() == "img") == undefined && 
          elems.find(e=>e.tagName.toLowerCase() == "svg") == undefined && 
-         elems[i].tagName.toLowerCase() == "div" && 
-         elems[i].className != "ScreenScrubberPickerOverlay"))
+         elems.find(e=>e.tagName.toLowerCase() == "span") == undefined && 
+         elems[i].tagName.toLowerCase() == "div" && elems[i].childElementCount == 0 &&
+         elems[i].className != "ScreenScrubberPickerOverlay" && elems[i].id != "ScreenScrubberPickerMsg"))
     {
           var originalI = i;
           if (elems[i].tagName.toLowerCase() == "svg")
@@ -19,9 +20,8 @@ function PickImage(mousePos)
             while(i <= elems.length && elems[i].tagName.toLowerCase() != "div")
               i++;
           }
-          while(i <= elems.length && elems[i].id == "" && elems[i].className == "" && elems[i].src == "")
+          while(i <= elems.length && elems[i].id == "" && elems[i].className == "" && (elems[i].src == "" || elems[i].src == undefined))
             i++;
-
           if (i >= elems.length) { i = originalI; }
           elem = elems[i];
           var offsets = elem.getBoundingClientRect();
@@ -38,13 +38,24 @@ function PickImage(mousePos)
           var PickerOverlay = document.getElementById("ScreenScrubberPickerOverlay");
           try {
             chrome.runtime.sendMessage(msg, function(response) {
-              if (PickerOverlay != undefined) PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
+              if (PickerOverlay != undefined)
+              {
+                 PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
+                 document.getElementById("ScreenScrubberPickerMsg").remove();
+                 document.removeEventListener("keydown", function() {});
+              }
+              
               document.body.style.cursor = "default";
             });
           }
           catch (e)
           {
-            if (PickerOverlay != undefined) PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
+            if (PickerOverlay != undefined) 
+            {
+              PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
+              document.getElementById("ScreenScrubberPickerMsg").remove();
+              document.removeEventListener("keydown", function(){});
+            }
             document.body.style.cursor = "default";
             alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
           }
@@ -63,4 +74,5 @@ document.addEventListener('mouseup', function(mousePos){
 chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
   if (message.action == "ReplaceImage" && GlobalPos != null)
     PickImage(GlobalPos)
+  return Promise.resolve("Message handled.");
 });

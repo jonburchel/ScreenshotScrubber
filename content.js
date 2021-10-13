@@ -74,6 +74,7 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
                             (currentImg.matchHref ? "[href='" + hrefMatch.href.baseVal + "']" : "") +
                             (currentImg.matchClass ? "[class='" + classMatch.className + "']" : "");
                         var matches = document.querySelectorAll(qry);
+                        
                         for (var j = 0; j < matches.length; j++)
                         {
                             var match = matches[j];

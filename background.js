@@ -2,6 +2,29 @@ function createScreenshot(callback) {
   chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);
 }
 
+var lastActiveTabId = null;
+var lastActiveWindowId = null;
+chrome.windows.onFocusChanged.addListener((winId)=>{
+  chrome.tabs.query( {windowId: winId, active: true}, (tabs)=>{
+    chrome.tabs.get(tabs[0].id, tab=> {
+      if (tab.url != "chrome://extensions/" && tab.url.trim() != "" && tab.url.indexOf("devtools://", 0) != 0 && tab.url.indexOf("chrome-extension://", 0) != 0)
+      {
+        lastActiveTabId = tabs[0].id;
+        lastActiveWindowId = tabs[0].windowId;
+      }
+    });
+  });
+});
+chrome.tabs.onActivated.addListener((info)=>{
+  chrome.tabs.get(info.tabId, function(tab) {
+        if (tab.url != "chrome://extensions/" && tab.url.trim() != "" && tab.url.indexOf("devtools://", 0) != 0 && tab.url.indexOf("chrome-extension://", 0) != 0)
+        {
+          lastActiveTabId = info.tabId;
+          lastActiveWindowId = tab.windowId;
+        }
+    });
+});
+
 chrome.runtime.onInstalled.addListener(()=>{
   chrome.contextMenus.create({
     title:"Pick an image on the current page to replace",
@@ -84,6 +107,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
           chrome.tabs.create({ url: qryUrl, active: false }, function(tab) {
             chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 775, width: 700});
           });
+        return Promise.resolve("Message handled.");
       });           
     });
   }
@@ -93,7 +117,20 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
     {
       if(tabs.length > 0)
           chrome.tabs.update(tabs[0].id, { url : chrome.runtime.getURL('options.html') + "?imagesRendered=true"  });
+      return Promise.resolve("Message handled.");
     });
+  }
+  if (msg.from == "replaceImageFromOptions")
+  {
+    chrome.windows.update(lastActiveWindowId, {focused: true}, (window) => {
+      chrome.tabs.update(lastActiveTabId, {active: true}, tab=>{
+        chrome.scripting.executeScript({
+          target: {tabId: lastActiveTabId},
+          files: ["activatePicker.js"]
+        });
+        return Promise.resolve("Message handled.");
+      })
+    })
   }
 });
 
