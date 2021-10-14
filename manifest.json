@@ -23,13 +23,12 @@
         },
         "description": "Replace selected text on the current page."
       },
-      "_execute_action": {
+      "ReplaceImage": {
         "suggested_key": {
-          "windows": "Ctrl+Shift+H",
-          "mac": "Command+Shift+H",
-          "chromeos": "Ctrl+Shift+H",
-          "linux": "Ctrl+Shift+H"
-        }
+          "default": "Alt+H",
+          "mac": "Alt+H"
+        },
+        "description": "Replace an image from the current page."
       }
     },
     "action": {

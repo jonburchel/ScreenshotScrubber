@@ -27,13 +27,13 @@ chrome.tabs.onActivated.addListener((info)=>{
 
 chrome.runtime.onInstalled.addListener(()=>{
   chrome.contextMenus.create({
-    title:"Pick an image on the current page to replace",
+    title:"Pick an image on the current page to replace (Alt+H)",
     contexts:["action"],
     id: "ScreenScrubberPickImageMenu",
   });
 
   chrome.contextMenus.create({
-    title:"Replace selected text with Screenshot Scrubber (Shift+Ctrl+H)",
+    title:"Replace selected text with Screenshot Scrubber (Ctrl+Shift+H)",
     contexts: ["selection"],
     id: "ScreenScrubberReplaceSelectionMenu"
   });
@@ -79,6 +79,14 @@ chrome.commands.onCommand.addListener((c, tab)=>{
     chrome.scripting.executeScript({
       target: {tabId: tab.id},
       files: ["replaceselection.js"]
+    });
+  }
+  console.log(c);
+  if (c=="ReplaceImage")
+  {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      files: ["activatePicker.js"]
     });
   }
 });
