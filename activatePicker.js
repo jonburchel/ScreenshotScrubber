@@ -2,7 +2,7 @@ if (document.getElementById("ScreenScrubberPickerMsg") == null)
 {
     var tbFillerMsg = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
     tbFillerMsg.style="position:fixed;z-index:2147483647;left:0;top:0;width:100%;height:100%;color:blue;background-color:transparent;cursor:crosshair;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;";
-    tbFillerMsg.innerHTML = "<center style='font-size:48pt; font-weight:500; color:blue; text-shadow: 1px 1px 10px lightgoldenrodyellow;'>\
+    tbFillerMsg.innerHTML = "<center style='font-size:36pt; font-weight:700; font-style: bold; color:blue; text-shadow: 3px 3px 16px lightgoldenrodyellow;'>\
                                 <br><br><br>Press ESC to exit or pick an image on the page to replace.\
                             </center>";
     tbFillerMsg.id = "ScreenScrubberPickerMsg";
