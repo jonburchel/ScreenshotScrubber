@@ -87,6 +87,7 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
                         }
                     }
                 }
+                alert("The page was scrubbed!  If an image didn't get replaced correctly, try changing the match criteria.");
             });       
         }     
     }
