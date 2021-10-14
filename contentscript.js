@@ -36,17 +36,16 @@ function PickImage(mousePos)
                     pixelRatio: window.devicePixelRatio,
                     from: 'mouseup'};
           var PickerOverlay = document.getElementById("ScreenScrubberPickerOverlay");
-          try {
-            chrome.runtime.sendMessage(msg, function(response) {
-              if (PickerOverlay != undefined)
-              {
-                 PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
-                 document.getElementById("ScreenScrubberPickerMsg").remove();
-                 document.removeEventListener("keydown", function() {});
-              }
-              
-              document.body.style.cursor = "default";
-            });
+          try 
+          {
+                if (PickerOverlay != undefined)
+                {
+                    PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
+                    document.getElementById("ScreenScrubberPickerMsg").remove();
+                    document.removeEventListener("keydown", function() {});
+                }              
+                document.body.style.cursor = "default";
+                chrome.runtime.sendMessage(msg, function(response) {});
           }
           catch (e)
           {
