@@ -10,7 +10,7 @@
     },
     "content_scripts": [{
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["contentscript.js"],
+      "js": ["contentscript.js", "mark.min.js"],
       "css": ["styles.css"],
       "run_at": "document_end",
       "all_frames": true
@@ -48,7 +48,7 @@
     },
     "web_accessible_resources": [
       {
-        "resources": ["/images/DocScreenshotScrubberIcon32.png", "styles.css"],
+        "resources": ["/images/DocScreenshotScrubberIcon32.png", "styles.css", "mark.min.js"],
         "matches": ["http://*/*", "https://*/*"]
       }
     ]

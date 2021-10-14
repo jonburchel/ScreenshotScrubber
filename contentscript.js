@@ -78,3 +78,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
     PickImage(GlobalPos)
   return Promise.resolve("Message handled.");
 });
+
+var scr = document.createElement("script");
+scr.src = chrome.runtime.getURL("mark.min.js");
+scr.encoding = "UTF-8";
+document.getElementsByTagName("head")[0].appendChild(scr);
