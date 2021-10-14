@@ -100,12 +100,12 @@ function ExtraHighlightNextInstance()
                 curMatchesString = "";
                 while (i < matches.length && curMatchesString.toLowerCase() != searchText.toLowerCase())
                 {
+                    
                     extraHighlighted = true;
-                    curMatchesString += matches[i].innerText;
                     matches[i].style.backgroundColor = "orange";
+                    curMatchesString += matches[i].innerText;
                     i++;
                 }
-                console.log(curMatchesString, searchText);
                 matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
                 i == matches.length;
             }
@@ -120,9 +120,8 @@ function ExtraHighlightNextInstance()
                 matches[i].style.backgroundColor = "orange";
                 i++;
             }
-            console.log(curMatchesString, searchText);
-
-            matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+            if (matches.length > 0)
+                matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
         }
     }
 }
@@ -144,6 +143,12 @@ function HighlightText()
                 separateWordSearch: false,
                 element: "span",
                 exclude: [".ignore", "noscript"],
+                filter: (node, range, term, count) => {
+                    if (node.parentElement.offsetParent == null)
+                        return false;
+                    else 
+                        return true;
+                },
                 done: count => { 
                     var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
                     var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
@@ -161,13 +166,37 @@ function HighlightText()
                     document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
                     (searchText == "" ? "<br>" : 
                     "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                    Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>")
-                    ExtraHighlightNextInstance();
+                    Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
+
+                    // Add extra highlighting to the user selected text.
+                    if (userSelectedNode != undefined)
+                    {
+                        var curSelectedText = ""
+                        var curNode = userSelectedNode.startContainer.nextSibling;
+                        curNode.id = "UserSelectedText";
+                        var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                        for (var i = 0; i < matches.length; i++)
+                        {
+                            if (matches[i].id == "UserSelectedText")
+                                break;
+                        }
+                        while (i < matches.length && curSelectedText != searchText)
+                        {
+                            curSelectedText += matches[i].innerText;
+                            matches[i].style.backgroundColor = "orange";
+                            i++;
+                        }
+                    }
+                    else
+                        ExtraHighlightNextInstance();
+
                 }
         });
       }
     });
 }
+
+var userSelectedNode = null;
 
 if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
 {
@@ -180,6 +209,9 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     var mousePos = getSelectionCoords(window);
     var elems = document.elementsFromPoint(mousePos.x, mousePos.y);
     var searchText = document.getSelection().toString().trim();
+    if (searchText != "")
+        userSelectedNode = document.getSelection().getRangeAt(0);
+
     var divDialog = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
     divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
     divDialog.className = "ScreenScrubberReplacePromptOverlay";
@@ -230,7 +262,8 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     </div>";
 
     HighlightText();
-    ExtraHighlightNextInstance();
+
+    
 
     document.getElementById('ScreenshotScrubberDialogHeaderRow').addEventListener('mousedown', mouseDown, false);
     window.addEventListener('mouseup', mouseUp, false);

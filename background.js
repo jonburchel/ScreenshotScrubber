@@ -81,7 +81,6 @@ chrome.commands.onCommand.addListener((c, tab)=>{
       files: ["replaceselection.js"]
     });
   }
-  console.log(c);
   if (c=="ReplaceImage")
   {
     chrome.scripting.executeScript({
