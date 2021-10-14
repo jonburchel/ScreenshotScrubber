@@ -36,23 +36,26 @@ function PickImage(mousePos)
                     pixelRatio: window.devicePixelRatio,
                     from: 'mouseup'};
           var PickerOverlay = document.getElementById("ScreenScrubberPickerOverlay");
+          var PickerMsg = document.getElementById("ScreenScrubberPickerMsg");
           try 
           {
-                if (PickerOverlay != undefined)
+                if (PickerOverlay != null)
                 {
                     PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
-                    document.getElementById("ScreenScrubberPickerMsg").remove();
+                    PickerMsg.remove();
                     document.removeEventListener("keydown", function() {});
-                }              
+                }          
                 document.body.style.cursor = "default";
-                chrome.runtime.sendMessage(msg, function(response) {});
+                setTimeout(() => { chrome.runtime.sendMessage(msg, function(response) {}); }, 0);
+                
           }
           catch (e)
           {
-            if (PickerOverlay != undefined) 
+            alert(e);
+            if (PickerOverlay != null) 
             {
               PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
-              document.getElementById("ScreenScrubberPickerMsg").remove();
+              PickerMsg.remove();
               document.removeEventListener("keydown", function(){});
             }
             document.body.style.cursor = "default";

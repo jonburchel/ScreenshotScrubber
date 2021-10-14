@@ -87,7 +87,7 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
                         }
                     }
                 }
-                alert("The page was scrubbed!  If an image didn't get replaced correctly, try changing the match criteria.");
+                alert("The page was scrubbed!\n\nIf an image didn't get replaced correctly, try changing the match criteria.\n\nIf text didn't get replaced correctly, it could be because there is HTML that breaks the visible text up.  Changes in visual formatting are often responsible for this (e.g. sections of bold or italic or a link embedded within the text).  Try replacing the text in smaller sub-segments, so each segment has no formatting differences.");
             });       
         }     
     }
