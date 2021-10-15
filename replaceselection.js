@@ -81,13 +81,13 @@ function doneTyping()
 
 var foundCount = 0; 
 
-function ExtraHighlightNextInstance(forward = true)
+function ExtraHighlightNextInstance()
 {
     var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
     var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
     if (searchText != "")
     {
-        if (forward)
+        if (!document.getElementById("ScreenshotScrubberSearchBackward").checked)
         {
             var extraHighlighted = false;
             var curMatchesString;
@@ -297,7 +297,7 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     divDialog.className = "ScreenScrubberReplacePromptOverlay";
     divDialog.id = divDialog.className;
     divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
-                                    400px; height: 170px; border-radius: 6px; font-weight: 300;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
+                                    400px; height: 190px; border-radius: 6px; font-weight: 300;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
         <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
             <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
                 <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
@@ -329,12 +329,14 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
                     Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>") + "\
                 </div>\
                 <b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                Search backward:&nbsp;</b>\
+                        <input class='ScreenshotScrubberDialogStyle' type=checkbox id='ScreenshotScrubberSearchBackward' />&nbsp;&nbsp;<br>\
+                <b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
                 Save to default configuration on close:&nbsp;</b>\
-                        <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
+                        <input class='ScreenshotScrubberDialogStyle' type=checkbox id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
             </td></tr>\
             <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>" +
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipBackButton value='<' style='padding:0px;padding-bottom:3px;marin:0px;width:35px;background:cornflowerblue;color:white;'>" +    
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipButton value='>' style='padding:0px;padding-bottom:3px;marin:0px;width:35px;background:cornflowerblue;color:white;'>" +        
+                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipButton value='Next' style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +        
                 "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceButton value=Replace style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
                 "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceAllButton value='Replace all' style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
                 "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberCloseButton value=Close style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>&nbsp;\
@@ -346,6 +348,13 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
 
     document.getElementById('ScreenshotScrubberDialogHeaderRow').addEventListener('mousedown', mouseDown, false);
     window.addEventListener('mouseup', mouseUp, false);
+
+    document.getElementById("ScreenshotScrubberSearchBackward").addEventListener("change", ()=>{
+        if (document.getElementById("ScreenshotScrubberSearchBackward").checked)
+            document.getElementById("ScreenshotScrubberSkipButton").value = "Previous";
+        else
+            document.getElementById("ScreenshotScrubberSkipButton").value = "Next";
+    });
 
     document.getElementById("ScreenshotScrubberCloseButton").addEventListener("click", ()=> {
         document.removeEventListener("keydown", ProcessKeyDown, false);
@@ -376,9 +385,6 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     });
     document.getElementById("ScreenshotScrubberSkipButton").addEventListener("click", ()=>{
         ExtraHighlightNextInstance();
-    });
-    document.getElementById("ScreenshotScrubberSkipBackButton").addEventListener("click", ()=>{
-        ExtraHighlightNextInstance(false);
     });
     document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", Replace);
     document.getElementById("ScreenshotScrubberReplaceAllButton").addEventListener("click", ()=>{
