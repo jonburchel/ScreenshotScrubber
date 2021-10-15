@@ -63,9 +63,14 @@
             border-top: 4px solid black;
             }
 
+            .AddRemoveRowButtons:hover{
+                cursor:pointer;
+                box-shadow: 0px 0px 5px white;
+            }
+
         </style>
     </head>
-  <body style="display:none;">
+  <body style="background:rgba(68, 78, 99, 0.75);">
         <center  style="margin-bottom: -100px;">
             <img src="./images/DocScreenshotScrubberIcon128.png" alt="Docs Screenshot Scrubber Icon">
             <h1 style="position:relative; top: -25px;">Screenshot Scrubber Options</h1>
@@ -92,10 +97,10 @@
                             <td></td>
                             <td><input type="text" id="Original0" value="Microsoft" size=35></input></td>
                             <td><input type="text" id="New0" value="Contoso, Ltd." size=35></input></td>
-                            <td><img valign=bottom src="./images/minus.png" id="Delete0"></td>
+                            <td><img class="AddRemoveRowButtons" valign=bottom src="./images/minus.png" id="Delete0"></td>
                         </tr>
                         <tr>
-                            <td></td><td></td><td></td><td><img id="AddRowButton" src="./images/plus.png"></td>
+                            <td></td><td></td><td></td><td><img class="AddRemoveRowButtons" id="AddRowButton" src="./images/plus.png"></td>
                         </tr>
                         <tr><td colspan=4><center><div id="SavedDiv" style="opacity: 0%;color:rgb(220, 47, 255);font:bolder;font-size:xxx-large;position:fixed;top:48%;left:50%;margin-left:-65px;">Saved</div></center></td></tr>
                     </table>
@@ -117,7 +122,7 @@
                             <td style="border: none;"></td>
                         </tr>
                         <tr style="border: none;">
-                            <td colspan=7 style="border:none;"></td><td style="border:none"><img id="AddImageRowButton" src="./images/plus.png" alt="Click to add a row."></td>
+                            <td colspan=7 style="border:none;"></td><td style="border:none"><img class="AddRemoveRowButtons" id="AddImageRowButton" src="./images/plus.png" alt="Click to add a row."></td>
                         </tr>
                     </table>
                 </center>
@@ -129,7 +134,7 @@
                     <b style="text-align:right;">Select to pick an image for replacement from the active tab.&nbsp;</b>
                 </td>
                 <td width=45>
-                    <img id="AddImageRowButton2" src="./images/plus.png" alt="Click to add a row.">
+                    <img class="AddRemoveRowButtons" id="AddImageRowButton2" src="./images/plus.png" alt="Click to add a row.">
                 </td>
             </tr>
         </table>

@@ -1,4 +1,4 @@
-if (document.getElementById("ScreenScrubberPickerMsg") == null)
+if (document.getElementById("ScreenScrubberPickerMsg") == null && document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
 {
     var tbFillerMsg = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
     tbFillerMsg.style="position:fixed;z-index:2147483647;left:0;top:0;width:100%;height:100%;color:blue;background-color:transparent;cursor:crosshair;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;";

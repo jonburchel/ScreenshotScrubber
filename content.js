@@ -1,10 +1,5 @@
 var ImageArrayJson = "";
 
-function escapeRegex(string) {
-    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-}
-
-
 function findAndReplace(s, replacement) {
     var markInstance = new Mark(document.body);
     markInstance.unmark({

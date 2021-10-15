@@ -21,7 +21,7 @@
     height: 170px;
   }
 
-  #ScreenScrubberReplacePromptOverlay input
+  #ScreenshotScrubberDialogStyle input
   {
     font-family: Segoe UI;
     margin-left: 3px;
@@ -29,6 +29,35 @@
     border-radius: 3px;
     text-indent: 3px;
   }
+
+  @-webkit-keyframes bluePulse {
+    from { background-color: lightsteelblue; -webkit-box-shadow: 0 0 0 #333; }
+    to { background-color: cornflowerblue; -webkit-box-shadow: 0 0 18px cornflowerblue; }
+  }
+  
+
+
+  .ScreenshotScrubberDialogStyle input[type=button]
+  {
+    transition: all 0.1s ease-in-out;
+  }
+
+  .ScreenshotScrubberDialogStyle input[type=button]:hover
+  {
+    
+    background-color: cornflowerblue;
+    -webkit-animation-name: bluePulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-box-shadow: 0 0 18px cornflowerblue;
+    cursor:pointer;
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 0.75;
+  }
+
 
 
 

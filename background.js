@@ -109,7 +109,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
           '&pixelRatio=' + msg.pixelRatio +
           '&screenImg=' + dataURL;
         if(tabs.length > 0)
+          chrome.windows.update(tabs[0].windowId, {focused: true}, (window)=>{
             chrome.tabs.update(tabs[0].id, { url : qryUrl });
+          });
         else
           chrome.tabs.create({ url: qryUrl, active: false }, function(tab) {
             chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 775, width: 700});
@@ -123,7 +125,11 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
     chrome.tabs.query({url:[chrome.runtime.getURL('options.html') + "?imagesRendered=true"]},function(tabs)
     {
       if(tabs.length > 0)
+      {
+        chrome.windows.update(tabs[0].windowId, {focused: true}, (window)=>{
           chrome.tabs.update(tabs[0].id, { url : chrome.runtime.getURL('options.html') + "?imagesRendered=true"  });
+        });
+      }
       return Promise.resolve("Message handled.");
     });
   }
@@ -131,11 +137,20 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
   {
     chrome.windows.update(lastActiveWindowId, {focused: true}, (window) => {
       chrome.tabs.update(lastActiveTabId, {active: true}, tab=>{
-        chrome.scripting.executeScript({
-          target: {tabId: lastActiveTabId},
-          files: ["activatePicker.js"]
-        });
-        return Promise.resolve("Message handled.");
+        if (tab.url.lastIndexOf("chrome://", 0) == 0)
+        {
+          console.log(tab.url);
+          sendResponse({status: "ChromeURL"});
+          //return Promise.resolve("Chrome URL was last active tab");
+        }
+        else
+        {
+          chrome.scripting.executeScript({
+            target: {tabId: lastActiveTabId},
+            files: ["activatePicker.js"]
+          });
+          return Promise.resolve("Message handled.");
+        }
       })
     })
   }

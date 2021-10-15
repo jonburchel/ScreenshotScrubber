@@ -169,6 +169,25 @@ function ExtraHighlightNextInstance()
     }
 }
 
+function UpdateButtonStates()
+{
+    document.getElementById("ScreenshotScrubberSkipButton").disabled = foundCount == 0;
+    document.getElementById("ScreenshotScrubberReplaceButton").disabled = foundCount == 0;
+    document.getElementById("ScreenshotScrubberReplaceAllButton").disabled = foundCount == 0;
+    if (foundCount == 0)
+    {
+        document.getElementById("ScreenshotScrubberSkipButton").className = "ScreenshotScrubberDialogStyle ignore disabled";
+        document.getElementById("ScreenshotScrubberReplaceButton").className = "ScreenshotScrubberDialogStyle ignore disabled";
+        document.getElementById("ScreenshotScrubberReplaceAllButton").className = "ScreenshotScrubberDialogStyle ignore disabled";
+    }
+    else
+    {
+        document.getElementById("ScreenshotScrubberSkipButton").className = "ScreenshotScrubberDialogStyle ignore";
+        document.getElementById("ScreenshotScrubberReplaceButton").className = "ScreenshotScrubberDialogStyle ignore";
+        document.getElementById("ScreenshotScrubberReplaceAllButton").className = "ScreenshotScrubberDialogStyle ignore";
+    }
+}
+
 function HighlightText()
 {
     var s = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
@@ -232,12 +251,13 @@ function HighlightText()
                     }
                     else
                         ExtraHighlightNextInstance();
-
+                    UpdateButtonStates();
                 }
             });
         }
     });
 }
+
 
 function Replace() 
 {
@@ -271,14 +291,16 @@ function Replace()
     }
 
     document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-        (searchText == "" ? "<br>" : 
+        (document.getElementById("ScreenshotScrubberSearchFor").value.trim() == "" ? "<br>" : 
         "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
         Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
+
+    UpdateButtonStates();
 }
 
 var userSelectedNode = null;
 
-if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
+if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && document.getElementById("ScreenScrubberPickerMsg") == null)
 {
     var IsTextSelected = document.getSelection().toString().trim() == "";
     var link = document.createElement("link");
@@ -336,9 +358,9 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
                         <input class='ScreenshotScrubberDialogStyle' type=checkbox id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
             </td></tr>\
             <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>" +
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipButton value='Next' style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +        
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceButton value=Replace style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceAllButton value='Replace all' style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
+                "<input class='ScreenshotScrubberDialogStyle ignore disabled' type=button id=ScreenshotScrubberSkipButton value='Next' disabled=true style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +        
+                "<input class='ScreenshotScrubberDialogStyle ignore disabled' type=button id=ScreenshotScrubberReplaceButton value=Replace disabled=true style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
+                "<input class='ScreenshotScrubberDialogStyle ignore disabled' type=button id=ScreenshotScrubberReplaceAllButton value='Replace all' disabled=true style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
                 "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberCloseButton value=Close style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>&nbsp;\
             </td></tr>\
         </table>\

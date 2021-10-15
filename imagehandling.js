@@ -227,7 +227,10 @@ function UpdateDefaultMatchSelections()
 function AddImage(e)
 {
     alert("Select an image on the last active tab page to replace.");
-    chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, ()=>{});
+    chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, response=>{
+        alert(response.status);
+
+    });
 }
 
 function ProcessImages()
@@ -349,7 +352,7 @@ function ProcessImages()
                     </div>\
                 </div>" +
                 "<center></td>" +
-             "<td style=\"\"><img valign=bottom src=\"./images/minus.png\" id=\"deleteImg" + imgId + "\"></td>";
+             "<td style=\"\"><img class=\"AddRemoveRowButtons\" valign=bottom src=\"./images/minus.png\" id=\"deleteImg" + imgId + "\"></td>";
 
             var id = document.getElementById("matchId" + imgId);
             var href = document.getElementById("matchHref" + imgId);

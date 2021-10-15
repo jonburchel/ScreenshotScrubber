@@ -57,7 +57,7 @@ function AddRow()
     var cell3 = row.insertCell(3);
     cell1.innerHTML="<input type=\"text\" id=\"Original" + id + "\" size=35></input>";
     cell2.innerHTML="<input type=\"text\" id=\"New" + id + "\" size=35></input>";
-    cell3.innerHTML="<img valign=bottom src=\"./images/minus.png\" id=\"Delete" + id + "\">";
+    cell3.innerHTML="<img class=\"AddRemoveRowButtons\" valign=bottom src=\"./images/minus.png\" id=\"Delete" + id + "\">";
     cell1.addEventListener("input", function(e) { DataChanged(e); });
     cell2.addEventListener("input", function(e) { DataChanged(e); });
     let DeleteRowButton = document.getElementById("Delete" + id);
