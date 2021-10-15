@@ -81,49 +81,90 @@ function doneTyping()
 
 var foundCount = 0; 
 
-function ExtraHighlightNextInstance()
+function ExtraHighlightNextInstance(forward = true)
 {
     var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
     var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
     if (searchText != "")
     {
-        var extraHighlighted = false;
-        var curMatchesString;
-        for (var i = 0; i < matches.length; i++)
+        if (forward)
         {
-            if (matches[i].style.backgroundColor == "orange")
+            var extraHighlighted = false;
+            var curMatchesString;
+            for (var i = 0; i < matches.length; i++)
             {
-                curMatchesString = "";
-                while (i < matches.length && matches[i].style.backgroundColor != "yellow")
+                if (matches[i].style.backgroundColor == "orange")
                 {
-                    matches[i].style.backgroundColor = "yellow";
-                    i++;
+                    while (i < matches.length && matches[i].style.backgroundColor != "yellow")
+                    {
+                        matches[i].style.backgroundColor = "yellow";
+                        i++;
+                    }
+                    curMatchesString = "";
+                    while (i < matches.length && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                    {
+                        
+                        extraHighlighted = true;
+                        matches[i].style.backgroundColor = "orange";
+                        curMatchesString += matches[i].innerText;
+                        i++;
+                    }
+                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    i == matches.length;
                 }
+            }
+            if (!extraHighlighted)
+            {
+                var i = 0;
                 curMatchesString = "";
                 while (i < matches.length && curMatchesString.toLowerCase() != searchText.toLowerCase())
                 {
-                    
-                    extraHighlighted = true;
-                    matches[i].style.backgroundColor = "orange";
                     curMatchesString += matches[i].innerText;
+                    matches[i].style.backgroundColor = "orange";
                     i++;
                 }
-                matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
-                i == matches.length;
+                if (matches.length > 0)
+                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
             }
         }
-        if (!extraHighlighted)
+        else
         {
-            var i = 0;
-            curMatchesString = "";
-            while (i < matches.length && curMatchesString.toLowerCase() != searchText.toLowerCase())
+            var extraHighlighted = false;
+            var curMatchesString;
+            for (var i = matches.length - 1; i > 0; i--)
             {
-                curMatchesString += matches[i].innerText;
-                matches[i].style.backgroundColor = "orange";
-                i++;
+                if (matches[i].style.backgroundColor == "orange")
+                {
+                    while (i >= 0 && matches[i].style.backgroundColor != "yellow")
+                    {
+                        matches[i].style.backgroundColor = "yellow";
+                        i--;
+                    }
+                    curMatchesString = "";
+                    while (i >= 0 && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                    {
+                        extraHighlighted = true;
+                        matches[i].style.backgroundColor = "orange";
+                        curMatchesString = matches[i].innerText + curMatchesString;
+                        i--;
+                    }
+                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    i == 0;
+                }
             }
-            if (matches.length > 0)
-                matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+            if (!extraHighlighted)
+            {
+                var i = matches.length - 1;
+                curMatchesString = "";
+                while (i >= 0 && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                {
+                    curMatchesString = matches[i].innerText + curMatchesString;
+                    matches[i].style.backgroundColor = "orange";
+                    i--;
+                }
+                if (matches.length > i + 1)
+                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+            }
         }
     }
 }
@@ -336,6 +377,9 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     document.getElementById("ScreenshotScrubberSkipButton").addEventListener("click", ()=>{
         ExtraHighlightNextInstance();
     });
+    document.getElementById("ScreenshotScrubberSkipBackButton").addEventListener("click", ()=>{
+        ExtraHighlightNextInstance(false);
+    });
     document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", Replace);
     document.getElementById("ScreenshotScrubberReplaceAllButton").addEventListener("click", ()=>{
         var iCountToReplace = foundCount;
@@ -358,54 +402,4 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
         SearchFor.focus();
     else
         ReplaceWith.focus();
-
-    // document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=> {
-    //     var replaceAll = (document.getElementById("ScreenshotScrubberReplaceAll") == null ? false : document.getElementById("ScreenshotScrubberReplaceAll").checked);
-    //     var replaceText = document.getElementById("ScreenshotScrubberReplace").value;
-    //     var updateConfig = document.getElementById("ScreenshotScrubberSaveToConfig").checked;
-    //     document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
-    //     document.removeEventListener("keydown", ProcessKeyDown, false);
-    //     if(updateConfig) {
-    //         chrome.storage.sync.get("ConfigArray", function(ca) {
-    //             if (ca.ConfigArray == null)
-    //             {
-    //                 var DefaultSettings = new Array(5);
-    //                 DefaultSettings[0] = ["Microsoft", "Contoso, Ltd."];
-    //                 DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678"];
-    //                 DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
-    //                 DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
-    //                 DefaultSettings[4] = [searchText, replaceText];
-    //                 chrome.storage.sync.set({ConfigArray: ca.ConfigArray});
-    //             }
-    //             else
-    //             {
-    //                 ca.ConfigArray.push([searchText, replaceText]);
-    //                 chrome.storage.sync.set({ConfigArray: ca.ConfigArray}, ()=>{
-    //                     chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
-    //                 });
-    //             }
-    //         });
-    //     }
-    //     if (replaceAll)
-    //         findAndReplace(searchText, replaceText, document.body);
-    //     else
-    //     {
-    //         if (IsTextSelected)
-    //         {
-    //             for (var i = 0; i < elems.length; i++)
-    //             {
-    //                 if (elems[i].innerHTML.search(replaceText) != 0);
-    //                 {
-    //                     elems[i].innerHTML = elems[i].innerHTML.replace(searchText, replaceText);
-    //                     i = elems.length;
-    //                 }
-    //             }
-    //         }
-    //         else
-    //         {
-    //             findAndReplace(searchText, replaceText, document.body, true);
-    //         }    
-    //     }
-        
-    // });
 }
