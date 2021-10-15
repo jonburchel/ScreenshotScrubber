@@ -60,6 +60,8 @@ function ProcessKeyDown(kv)
     {
         document.removeEventListener("keydown", ProcessKeyDown, false);
         document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+        var markInstance = new Mark(document.body);
+        markInstance.unmark(()=>{});
     }
     if (kv.keyCode == 13)
         document.getElementById("ScreenshotScrubberReplaceButton").click();
@@ -82,7 +84,7 @@ var foundCount = 0;
 function ExtraHighlightNextInstance()
 {
     var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
-    var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
+    var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
     if (searchText != "")
     {
         var extraHighlighted = false;
@@ -128,7 +130,7 @@ function ExtraHighlightNextInstance()
 
 function HighlightText()
 {
-    var s = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
+    var s = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
     var markInstance = new Mark(document.body);
     markInstance.unmark({
         done: function(){
@@ -142,7 +144,7 @@ function HighlightText()
                 iframesTimeout: 500,
                 separateWordSearch: false,
                 element: "span",
-                exclude: [".ignore", "noscript"],
+                exclude: [".ignore", "noscript", "script"],
                 filter: (node, range, term, count) => {
                     if (node.parentElement.offsetParent == null)
                         return false;
@@ -150,14 +152,14 @@ function HighlightText()
                         return true;
                 },
                 done: count => { 
-                    var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.trim();
+                    var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
                     var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
                     foundCount = 0;
                     var curMatchesString = ""
-                    for (var i = 0; i < count; i++)
+                    for (var i = 0; i < marks.length; i++)
                     {
                         curMatchesString += marks[i].innerText;
-                        if (curMatchesString == searchText)
+                        if (curMatchesString.toLowerCase() === searchText)
                         {
                             foundCount++;
                             curMatchesString = "";
@@ -180,7 +182,7 @@ function HighlightText()
                             if (matches[i].id == "UserSelectedText")
                                 break;
                         }
-                        while (i < matches.length && curSelectedText != searchText)
+                        while (i < matches.length && curSelectedText.toLowerCase() != searchText)
                         {
                             curSelectedText += matches[i].innerText;
                             matches[i].style.backgroundColor = "orange";
@@ -208,8 +210,8 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     document.getElementsByTagName("head")[0].appendChild(link);
     var mousePos = getSelectionCoords(window);
     var elems = document.elementsFromPoint(mousePos.x, mousePos.y);
-    var searchText = document.getSelection().toString().trim();
-    if (searchText != "")
+    var searchText = document.getSelection().toString();
+    if (searchText.trim() != "")
         userSelectedNode = document.getSelection().getRangeAt(0);
 
     var divDialog = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
@@ -252,18 +254,17 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
                 Save to default configuration on close:&nbsp;</b>\
                         <input class='ScreenshotScrubberDialogStyle' type=checkbox checked id='ScreenshotScrubberSaveToConfig' />&nbsp;&nbsp;\
             </td></tr>\
-            <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>\
-                <input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipButton value=Skip style='padding:0px;marin:0px;width:70px;background:cornflowerblue;color:white;'>" +
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceButton value=Replace style='padding:0px;marin:0px;width:70px;background:cornflowerblue;color:white;'>" +
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceAllButton value='Replace all' style='padding:0px;marin:0px;width:70px;background:cornflowerblue;color:white;'>" +
-                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberCloseButton value=Close style='padding:0px;marin:0px;width:70px;background:cornflowerblue;color:white;'>&nbsp;\
+            <tr class='ScreenshotScrubberDialogStyle' height='100%' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;'>" +
+                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipBackButton value='<' style='padding:0px;padding-bottom:3px;marin:0px;width:35px;background:cornflowerblue;color:white;'>" +    
+                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberSkipButton value='>' style='padding:0px;padding-bottom:3px;marin:0px;width:35px;background:cornflowerblue;color:white;'>" +        
+                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceButton value=Replace style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
+                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberReplaceAllButton value='Replace all' style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>" +
+                "<input class='ScreenshotScrubberDialogStyle ignore' type=button id=ScreenshotScrubberCloseButton value=Close style='padding:0px;padding-bottom:3px;marin:0px;width:75px;background:cornflowerblue;color:white;'>&nbsp;\
             </td></tr>\
         </table>\
     </div>";
 
-    HighlightText();
-
-    
+    HighlightText(); 
 
     document.getElementById('ScreenshotScrubberDialogHeaderRow').addEventListener('mousedown', mouseDown, false);
     window.addEventListener('mouseup', mouseUp, false);
@@ -271,10 +272,47 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
     document.getElementById("ScreenshotScrubberCloseButton").addEventListener("click", ()=> {
         document.removeEventListener("keydown", ProcessKeyDown, false);
         document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+        var markInstance = new Mark(document.body);
+        markInstance.unmark(()=>{});
     });
     document.getElementById("ScreenshotScrubberSkipButton").addEventListener("click", ()=>{
         ExtraHighlightNextInstance();
-    })
+    });
+    document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=>{
+        var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+        var iMatchStart = 0;
+        for (var i = 0; i < matches.length; i++)
+        {
+            if (matches[i].style.backgroundColor == "orange")
+            {
+                iMatchStart = i;
+                i = matches.length;
+            }
+        }
+        ExtraHighlightNextInstance();
+        var curMatchString = matches[iMatchStart].innerText.toLowerCase();
+        if (document.getElementById("ScreenshotScrubberReplace").value.toLowerCase().lastIndexOf(document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase()) == -1)
+        {
+            foundCount--;
+            matches[iMatchStart].parentElement.replaceChild(document.createTextNode(document.getElementById("ScreenshotScrubberReplace").value), matches[iMatchStart]);
+        }
+        else
+        {
+            matches[iMatchStart].innerHTML = document.getElementById("ScreenshotScrubberReplace").value;
+            matches[iMatchStart].style.backgroundColor = "yellow";
+            iMatchStart++;
+        }
+        while (curMatchString != document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase())
+        {   
+            curMatchString += matches[iMatchStart].innerText.toLowerCase();
+            matches[iMatchStart].remove();
+        }
+
+        document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+            (searchText == "" ? "<br>" : 
+            "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+            Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
+    });
 
     document.addEventListener("keydown", ProcessKeyDown);
    
@@ -291,53 +329,54 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
         SearchFor.focus();
     else
         ReplaceWith.focus();
-        document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=> {
-            var replaceAll = (document.getElementById("ScreenshotScrubberReplaceAll") == null ? false : document.getElementById("ScreenshotScrubberReplaceAll").checked);
-            var replaceText = document.getElementById("ScreenshotScrubberReplace").value;
-            var updateConfig = document.getElementById("ScreenshotScrubberSaveToConfig").checked;
-            document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
-            document.removeEventListener("keydown", ProcessKeyDown, false);
-            if(updateConfig) {
-                chrome.storage.sync.get("ConfigArray", function(ca) {
-                    if (ca.ConfigArray == null)
-                    {
-                        var DefaultSettings = new Array(5);
-                        DefaultSettings[0] = ["Microsoft", "Contoso, Ltd."];
-                        DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678"];
-                        DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
-                        DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
-                        DefaultSettings[4] = [searchText, replaceText];
-                        chrome.storage.sync.set({ConfigArray: ca.ConfigArray});
-                    }
-                    else
-                    {
-                        ca.ConfigArray.push([searchText, replaceText]);
-                        chrome.storage.sync.set({ConfigArray: ca.ConfigArray}, ()=>{
-                            chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
-                        });
-                    }
-        });
-        }
-        if (replaceAll)
-            findAndReplace(searchText, replaceText, document.body);
-        else
-        {
-            if (IsTextSelected)
-            {
-                for (var i = 0; i < elems.length; i++)
-                {
-                    if (elems[i].innerHTML.search(replaceText) != 0);
-                    {
-                        elems[i].innerHTML = elems[i].innerHTML.replace(searchText, replaceText);
-                        i = elems.length;
-                    }
-                }
-            }
-            else
-            {
-                findAndReplace(searchText, replaceText, document.body, true);
-            }    
-        }
+
+    // document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=> {
+    //     var replaceAll = (document.getElementById("ScreenshotScrubberReplaceAll") == null ? false : document.getElementById("ScreenshotScrubberReplaceAll").checked);
+    //     var replaceText = document.getElementById("ScreenshotScrubberReplace").value;
+    //     var updateConfig = document.getElementById("ScreenshotScrubberSaveToConfig").checked;
+    //     document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+    //     document.removeEventListener("keydown", ProcessKeyDown, false);
+    //     if(updateConfig) {
+    //         chrome.storage.sync.get("ConfigArray", function(ca) {
+    //             if (ca.ConfigArray == null)
+    //             {
+    //                 var DefaultSettings = new Array(5);
+    //                 DefaultSettings[0] = ["Microsoft", "Contoso, Ltd."];
+    //                 DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678"];
+    //                 DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
+    //                 DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
+    //                 DefaultSettings[4] = [searchText, replaceText];
+    //                 chrome.storage.sync.set({ConfigArray: ca.ConfigArray});
+    //             }
+    //             else
+    //             {
+    //                 ca.ConfigArray.push([searchText, replaceText]);
+    //                 chrome.storage.sync.set({ConfigArray: ca.ConfigArray}, ()=>{
+    //                     chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
+    //                 });
+    //             }
+    //         });
+    //     }
+    //     if (replaceAll)
+    //         findAndReplace(searchText, replaceText, document.body);
+    //     else
+    //     {
+    //         if (IsTextSelected)
+    //         {
+    //             for (var i = 0; i < elems.length; i++)
+    //             {
+    //                 if (elems[i].innerHTML.search(replaceText) != 0);
+    //                 {
+    //                     elems[i].innerHTML = elems[i].innerHTML.replace(searchText, replaceText);
+    //                     i = elems.length;
+    //                 }
+    //             }
+    //         }
+    //         else
+    //         {
+    //             findAndReplace(searchText, replaceText, document.body, true);
+    //         }    
+    //     }
         
-    });
+    // });
 }
