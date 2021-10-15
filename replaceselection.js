@@ -325,7 +325,7 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
                 }
                 else
                 {
-                    ca.ConfigArray.push([document.getElementById("ScreenshotScrubberSearchFor").value, document.getElementById("ScreenshotScrubberReplace").value;]);
+                    ca.ConfigArray.push([document.getElementById("ScreenshotScrubberSearchFor").value, document.getElementById("ScreenshotScrubberReplace").value]);
                     chrome.storage.sync.set({ConfigArray: ca.ConfigArray}, ()=>{
                         chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
                     });
