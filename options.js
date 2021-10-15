@@ -60,7 +60,7 @@ function AddRow()
     var cell4 = row.insertCell(4);
     cell1.innerHTML="<input type=\"text\" id=\"Original" + id + "\" size=35></input>";
     cell2.innerHTML="<input type=\"text\" id=\"New" + id + "\" size=35></input>";
-    cell3.innerHTML="<input type=\"checkbox\" id=\"CaseSensitive" + id + "\"></input>";
+    cell3.innerHTML="<center><input type=\"checkbox\" id=\"CaseSensitive" + id + "\"></center></input>";
     cell4.innerHTML="<img class=\"AddRemoveRowButtons\" valign=bottom src=\"./images/minus.png\" id=\"Delete" + id + "\">";
     cell1.addEventListener("input", function(e) { DataChanged(e); });
     cell2.addEventListener("input", function(e) { DataChanged(e); });
