@@ -28,16 +28,15 @@ chrome.tabs.onActivated.addListener((info)=>{
 chrome.runtime.onInstalled.addListener(()=>{
   chrome.contextMenus.create({
     title:"Pick an image on the current page to replace (Alt+H)",
-    contexts:["action"],
+    contexts:["all"],
     id: "ScreenScrubberPickImageMenu",
   });
 
   chrome.contextMenus.create({
-    title:"Replace selected text with Screenshot Scrubber (Ctrl+Shift+H)",
-    contexts: ["selection"],
-    id: "ScreenScrubberReplaceSelectionMenu"
+    title:"Replace text with Screenshot Scrubber (Ctrl+Shift+H)",
+    contexts: ["all"],
+    id: "ScreenScrubberReplaceSelectionAnyMenu"
   });
-
   chrome.contextMenus.create({
     title:"Replace image with Screenshot Scrubber",
     contexts: ["image"],
@@ -52,7 +51,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
       files: ["activatePicker.js"]
     });
   }
-  if (info.menuItemId == "ScreenScrubberReplaceSelectionMenu") {
+  if (info.menuItemId =="ScreenScrubberReplaceSelectionAnyMenu") {
       chrome.scripting.executeScript({
         target: {tabId: tab.id},
         files: ["replaceselection.js"]
