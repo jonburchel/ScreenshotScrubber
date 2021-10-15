@@ -394,6 +394,7 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
         var iCountToReplace = foundCount;
         for (var i = 0; i < iCountToReplace; i++)
             Replace();
+        alert(iCountToReplace + " replacements made.");
     });
 
     document.addEventListener("keydown", ProcessKeyDown);

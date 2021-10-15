@@ -7,6 +7,7 @@ var ThumbnailSize = 42;
 
 document.body.addEventListener("load", ProcessImages());
 
+
 function CreateUniqueID(numDigits = 10) 
 {
     var s = "";
@@ -223,15 +224,16 @@ function UpdateDefaultMatchSelections()
     if (!PickedImageDetails.matchSrc && !PickedImageDetails.matchID && !PickedImageDetails.matchClass) PickedImageDetails.matchHref = PickedImageDetails.imageElement.search(new RegExp("href\\s*=\\s*\"", "g")) != -1;
 }
 
+function AddImage(e)
+{
+    alert("Select an image on the last active tab page to replace.");
+    chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, ()=>{});
+}
+
 function ProcessImages()
 {
-    var addImgRowBttn = document.getElementById("AddImageRowButton");
-    addImgRowBttn.addEventListener("click", function (e)
-    {
-        chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, ()=>{
-            alert("Select an image on the last active tab page to replace.");
-        });
-    });
+    document.getElementById("AddImageRowButton").addEventListener("click", AddImage);
+    document.getElementById("AddImageRowButton2").addEventListener("click", AddImage);
     var PickedElementToReplace = GetQueryVariable("imageElement");
     if (PickedElementToReplace != undefined)
     {
