@@ -73,7 +73,7 @@ function ProcessMatch(elem)
 }
 
 var typingTimer;
-var doneTypingInterval = 30; // wait 500ms after typing stops to save changed values...
+var doneTypingInterval = 150; // wait 150ms after typing stops to save changed values...
 function doneTyping()
 {
     HighlightText();
@@ -87,51 +87,66 @@ function ExtraHighlightNextInstance()
     var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
     if (searchText != "")
     {
+        var iSelectedIndex = 1;
         if (!document.getElementById("ScreenshotScrubberSearchBackward").checked)
         {
             var extraHighlighted = false;
-            var curMatchesString;
+            var curMatchesString = "";
             for (var i = 0; i < matches.length; i++)
             {
                 if (matches[i].style.backgroundColor == "orange")
                 {
+                    curMatchesString = "";
                     while (i < matches.length && matches[i].style.backgroundColor != "yellow")
                     {
                         matches[i].style.backgroundColor = "yellow";
                         i++;
                     }
                     curMatchesString = "";
-                    while (i < matches.length && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                    while (i < matches.length && curMatchesString.toLowerCase() != searchText)
                     {
-                        
                         extraHighlighted = true;
                         matches[i].style.backgroundColor = "orange";
                         curMatchesString += matches[i].innerText;
                         i++;
                     }
-                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    if (i <= matches.length)
+                        matches[i - 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
                     i == matches.length;
+                    iSelectedIndex++;
+                }
+                else
+                {
+                    curMatchesString += matches[i].innerText;
+                    if (curMatchesString.toLowerCase() == searchText)
+                    {
+                        iSelectedIndex++;
+                        curMatchesString = "";
+                    }
                 }
             }
             if (!extraHighlighted)
             {
+                iSelectedIndex = 1;
+                console.log(0);
                 var i = 0;
                 curMatchesString = "";
-                while (i < matches.length && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                while (i < matches.length && curMatchesString.toLowerCase() != searchText)
                 {
                     curMatchesString += matches[i].innerText;
                     matches[i].style.backgroundColor = "orange";
                     i++;
                 }
                 if (matches.length > 0)
-                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
             }
         }
         else
         {
             var extraHighlighted = false;
-            var curMatchesString;
-            for (var i = matches.length - 1; i > 0; i--)
+            var curMatchesString = "";
+            iSelectedIndex = foundCount;
+            for (var i = matches.length - 1; i >= 0; i--)
             {
                 if (matches[i].style.backgroundColor == "orange")
                 {
@@ -141,32 +156,52 @@ function ExtraHighlightNextInstance()
                         i--;
                     }
                     curMatchesString = "";
-                    while (i >= 0 && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                    while (i >= 0 && curMatchesString.toLowerCase() != searchText)
                     {
                         extraHighlighted = true;
                         matches[i].style.backgroundColor = "orange";
                         curMatchesString = matches[i].innerText + curMatchesString;
                         i--;
                     }
-                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    if (i >= -1) matches[i + 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
                     i == 0;
+                    iSelectedIndex--;
+                }
+                else
+                {
+                    curMatchesString = matches[i].innerText + curMatchesString;
+                    if (curMatchesString.toLowerCase() == searchText)
+                    {
+                        iSelectedIndex--;
+                        curMatchesString = "";
+                    }
                 }
             }
             if (!extraHighlighted)
             {
+                iSelectedIndex = foundCount;
                 var i = matches.length - 1;
                 curMatchesString = "";
-                while (i >= 0 && curMatchesString.toLowerCase() != searchText.toLowerCase())
+                while (i >= 0 && curMatchesString.toLowerCase() != searchText)
                 {
                     curMatchesString = matches[i].innerText + curMatchesString;
                     matches[i].style.backgroundColor = "orange";
                     i--;
                 }
                 if (matches.length > i + 1)
-                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
             }
         }
     }
+    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+    (searchText == "" ? "<br>" : 
+        (foundCount == 0 ? 
+            "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+            Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
+            "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
+            iSelectedIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
+        )
+    )
 }
 
 function UpdateButtonStates()
@@ -226,10 +261,6 @@ function HighlightText()
                             curMatchesString = "";
                         }
                     }
-                    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-                    (searchText == "" ? "<br>" : 
-                    "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                    Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
 
                     // Add extra highlighting to the user selected text.
                     if (userSelectedNode != undefined)
@@ -238,17 +269,38 @@ function HighlightText()
                         var curNode = userSelectedNode.startContainer.nextSibling;
                         curNode.id = "UserSelectedText";
                         var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                        var selectedItemIndex = 0;
                         for (var i = 0; i < matches.length; i++)
                         {
+                            curSelectedText += matches[i].innerText;
+                            if (curSelectedText.toLowerCase() == searchText)
+                            {
+                                selectedItemIndex++;
+                                curSelectedText = "";
+                            }
                             if (matches[i].id == "UserSelectedText")
+                            {
+                                if (matches[i].innerText.toLowerCase() != searchText)
+                                    selectedItemIndex++;
                                 break;
+                            }
                         }
+                        curSelectedText = "";
                         while (i < matches.length && curSelectedText.toLowerCase() != searchText)
                         {
                             curSelectedText += matches[i].innerText;
                             matches[i].style.backgroundColor = "orange";
                             i++;
                         }
+                        document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+                        (searchText == "" ? "<br>" : 
+                            (foundCount == 0 ? 
+                                "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                                Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
+                                "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
+                                selectedItemIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
+                            )
+                        );
                     }
                     else
                         ExtraHighlightNextInstance();
@@ -262,10 +314,19 @@ function HighlightText()
 
 function Replace() 
 {
+    var selectedItemIndex = 0;
+    var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
     var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
     var iMatchStart = 0;
+    var curMatchString = "";
     for (var i = 0; i < matches.length; i++)
     {
+        curMatchString += matches[i].innerText;
+        if (curMatchString.toLowerCase() == searchText)
+        {
+            selectedItemIndex++;
+            curMatchString = "";
+        }
         if (matches[i].style.backgroundColor == "orange")
         {
             iMatchStart = i;
@@ -273,8 +334,8 @@ function Replace()
         }
     }
     ExtraHighlightNextInstance();
-    var curMatchString = matches[iMatchStart].innerText.toLowerCase();
-    if (document.getElementById("ScreenshotScrubberReplace").value.toLowerCase().lastIndexOf(document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase()) == -1)
+    curMatchString = matches[iMatchStart].innerText.toLowerCase();
+    if (document.getElementById("ScreenshotScrubberReplace").value.toLowerCase().lastIndexOf(searchText) == -1)
     {
         foundCount--;
         matches[iMatchStart].parentElement.replaceChild(document.createTextNode(document.getElementById("ScreenshotScrubberReplace").value), matches[iMatchStart]);
@@ -285,16 +346,25 @@ function Replace()
         matches[iMatchStart].style.backgroundColor = "yellow";
         iMatchStart++;
     }
-    while (curMatchString != document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase())
+    if (document.getElementById("ScreenshotScrubberSearchBackward").checked)
+        selectedItemIndex--;
+    if (selectedItemIndex == 0)
+        selectedItemIndex = foundCount;
+    if (selectedItemIndex > foundCount)
+        selectedItemIndex = 1;
+    while (curMatchString.toLowerCase() != searchText)
     {   
         curMatchString += matches[iMatchStart].innerText.toLowerCase();
         matches[iMatchStart].remove();
     }
 
     document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-        (document.getElementById("ScreenshotScrubberSearchFor").value.trim() == "" ? "<br>" : 
-        "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-        Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
+        (foundCount == 0 ? 
+            "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+            Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
+            "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
+            selectedItemIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
+        );
 
     UpdateButtonStates();
 }
@@ -328,7 +398,7 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
                     <b class='ignore' style='position:relative; top:7px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
                 </th></tr>\
             <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
-                <td class='ScreenshotScrubberDialogStyle' style='min-width: 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                <td class='ScreenshotScrubberDialogStyle' style='text-align:right;min-width: 0px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
                 &nbsp;&nbsp;<span class='ignore'>Search for:</span></td>\
                 <td class='ScreenshotScrubberDialogStyle'>\
                     <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
@@ -346,10 +416,10 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
                 </td>\
             </tr>\
             <tr class='ScreenshotScrubberDialogStyle' ><td class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:right;font-size:small;'>\
-                <div style='all:revert;' id='ScreenshotScrubberFoundCountDiv'>" + 
+                <div style='all:revert;position:relative;top:-2px;' id='ScreenshotScrubberFoundCountDiv' />" + 
                     (searchText == "" ? "<br>" : 
                     "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                    Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</span>") + "\
+                    </span>") + "\
                 </div>\
                 <span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
                 Case sensitive:&nbsp;</span>\
