@@ -91,18 +91,19 @@
                 <center>
                     <table id="SettingsList">
                         <tr>
-                            <td></td><td><b>Original Text&nbsp;&nbsp;&nbsp;&nbsp;</b></td><td><b>New Text</b></td><td></td>
+                            <td></td><td><b>Original Text&nbsp;&nbsp;&nbsp;&nbsp;</b></td><td><b>New Text</b></td><td colspan=2><b>Match<br>Case</b></td>
                         </tr>
                         <tr id="Row0">
                             <td></td>
                             <td><input type="text" id="Original0" value="Microsoft" size=35></input></td>
                             <td><input type="text" id="New0" value="Contoso, Ltd." size=35></input></td>
+                            <td><input type="checkbox" id="CaseSensitive0"></td>
                             <td><img class="AddRemoveRowButtons" valign=bottom src="./images/minus.png" id="Delete0"></td>
                         </tr>
                         <tr>
-                            <td></td><td></td><td></td><td><img class="AddRemoveRowButtons" id="AddRowButton" src="./images/plus.png"></td>
+                            <td></td><td></td><td></td><td></td><td><img class="AddRemoveRowButtons" id="AddRowButton" src="./images/plus.png"></td>
                         </tr>
-                        <tr><td colspan=4><center><div id="SavedDiv" style="opacity: 0%;color:rgb(220, 47, 255);font:bolder;font-size:xxx-large;position:fixed;top:48%;left:50%;margin-left:-65px;">Saved</div></center></td></tr>
+                        <tr><td colspan=5><center><div id="SavedDiv" style="opacity: 0%;color:rgb(220, 47, 255);font:bolder;font-size:xxx-large;position:fixed;top:48%;left:50%;margin-left:-65px;">Saved</div></center></td></tr>
                     </table>
                 </center>
                 <h2><div style="position: relative; top:-20px;margin-bottom:-20px;">Replace images<div></h2>
@@ -130,7 +131,7 @@
         </table> 
         <table style="display:none;" id="NoImagesText">
             <tr>
-                <td width=558 style="text-align: right;">
+                <td width=580 style="text-align: right;">
                     <b style="text-align:right;">Pick an image from the last active tab to replace.&nbsp;</b>
                 </td>
                 <td width=25>

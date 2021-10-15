@@ -35,11 +35,10 @@
     to { background-color: cornflowerblue; -webkit-box-shadow: 0 0 18px cornflowerblue; }
   }
   
-
-
   .ScreenshotScrubberDialogStyle input[type=button]
   {
     transition: all 0.1s ease-in-out;
+    margin: 2px;
   }
 
   .ScreenshotScrubberDialogStyle input[type=button]:hover

@@ -1,9 +1,9 @@
 let AddRowButton = document.getElementById("AddRowButton");
 AddRowButton.addEventListener("click", AddRow);
-//window.addEventListener("unload", StoreConfigValues);
 document.getElementById("Original0").addEventListener("input", function(e) { DataChanged(e); });
 document.getElementById("New0").addEventListener("input", function(e) { DataChanged(e); });
 document.getElementById("Delete0").addEventListener("click", function(e) { DeleteRow(e); });
+document.getElementById("CaseSensitive0").addEventListener("change", StoreConfigValues);
 
 var typingTimer;
 var doneTypingInterval = 500; // wait 500ms after typing stops to save changed values...
@@ -17,10 +17,10 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
     if (ca.ConfigArray == null)
     {
         DefaultSettings = new Array(4);
-        DefaultSettings[0] = ["Microsoft", "Contoso, Ltd."];
-        DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678"];
-        DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
-        DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
+        DefaultSettings[0] = ["Microsoft", "Contoso, Ltd.", false];
+        DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
+        DefaultSettings[2] = ["<your name>", "Chris Q. Public", false];
+        DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
         chrome.storage.sync.set({ConfigArray: DefaultSettings});
     }
     else
@@ -29,11 +29,13 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
     }
     document.getElementById("Original0").value = DefaultSettings[0][0];
     document.getElementById("New0").value = DefaultSettings[0][1];
+    document.getElementById("CaseSensitive0").checked = DefaultSettings[0][2];
     for (var i = 1; i < DefaultSettings.length; i++)
     {
         AddRow();
         SettingsList.rows[i + 1].cells[1].children[0].value = DefaultSettings[i][0];
         SettingsList.rows[i + 1].cells[2].children[0].value = DefaultSettings[i][1];
+        SettingsList.rows[i + 1].cells[3].children[0].checked = DefaultSettings[i][2];
     }
     AddRowButton.hidden = false;    
 });
@@ -55,15 +57,19 @@ function AddRow()
     var cell1 = row.insertCell(1);
     var cell2 = row.insertCell(2);
     var cell3 = row.insertCell(3);
+    var cell4 = row.insertCell(4);
     cell1.innerHTML="<input type=\"text\" id=\"Original" + id + "\" size=35></input>";
     cell2.innerHTML="<input type=\"text\" id=\"New" + id + "\" size=35></input>";
-    cell3.innerHTML="<img class=\"AddRemoveRowButtons\" valign=bottom src=\"./images/minus.png\" id=\"Delete" + id + "\">";
+    cell3.innerHTML="<input type=\"checkbox\" id=\"CaseSensitive" + id + "\"></input>";
+    cell4.innerHTML="<img class=\"AddRemoveRowButtons\" valign=bottom src=\"./images/minus.png\" id=\"Delete" + id + "\">";
     cell1.addEventListener("input", function(e) { DataChanged(e); });
     cell2.addEventListener("input", function(e) { DataChanged(e); });
+    cell3.addEventListener("change", StoreConfigValues);
     let DeleteRowButton = document.getElementById("Delete" + id);
     DeleteRowButton.addEventListener("click", function(e) { DeleteRow(e); });
     AddRowButton.hidden = true;
 }
+
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -87,7 +93,9 @@ function StoreConfigValues()
     var ReplaceValues = new Array(SettingsList.rows.length - 3);
     for (var i = 0; i < ReplaceValues.length; i++)
     {
-        ReplaceValues[i] = [SettingsList.rows[i + 1].cells[1].children[0].value, SettingsList.rows[i + 1].cells[2].children[0].value];
+        ReplaceValues[i] = [SettingsList.rows[i + 1].cells[1].children[0].value, 
+                            SettingsList.rows[i + 1].cells[2].children[0].value, 
+                            SettingsList.rows[i + 1].cells[3].children[0].checked];
     }
     chrome.storage.sync.set({ConfigArray: ReplaceValues});
     FlashSaved();
@@ -100,6 +108,7 @@ function DataChanged(e)
     let OriginalValue = document.getElementById("Original" + id);
     let NewValue = document.getElementById("New" + id);
     let DeleteRowButton = document.getElementById("Delete" + id);
+    let CaseSensitive = document.getElementById("CaseSensitive" + id);
     var i = 0;
     for (i = 1; i < SettingsList.rows.length - 3; i++) 
     {
