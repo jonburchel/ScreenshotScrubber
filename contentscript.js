@@ -37,30 +37,24 @@ function PickImage(mousePos)
                     from: 'mouseup'};
           var PickerOverlay = document.getElementById("ScreenScrubberPickerOverlay");
           var PickerMsg = document.getElementById("ScreenScrubberPickerMsg");
-          try 
+          if (PickerOverlay != null)
           {
-                if (PickerOverlay != null)
-                {
-                    PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
-                    PickerMsg.remove();
-                    document.removeEventListener("keydown", function() {});
-                }          
-                document.body.style.cursor = "default";
-                setTimeout(() => { chrome.runtime.sendMessage(msg, function(response) {}); }, 0);
-                
-          }
-          catch (e)
-          {
-            alert(e);
-            if (PickerOverlay != null) 
-            {
               PickerOverlay.remove(); // remove the overlay <div> we created for crosshairs during item selection
               PickerMsg.remove();
-              document.removeEventListener("keydown", function(){});
+              document.removeEventListener("keydown", function() {});
+          }          
+          document.body.style.cursor = "default";
+          setTimeout(() => { 
+            try
+            {
+              chrome.runtime.sendMessage(msg, function(response) {}); 
             }
-            document.body.style.cursor = "default";
-            alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
-          }
+            catch (e)
+            {
+              alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
+            }
+          }, 0);
+
           i = elems.length;
         }
     }
