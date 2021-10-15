@@ -198,6 +198,43 @@ function HighlightText()
     });
 }
 
+function Replace() 
+{
+    var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+    var iMatchStart = 0;
+    for (var i = 0; i < matches.length; i++)
+    {
+        if (matches[i].style.backgroundColor == "orange")
+        {
+            iMatchStart = i;
+            i = matches.length;
+        }
+    }
+    ExtraHighlightNextInstance();
+    var curMatchString = matches[iMatchStart].innerText.toLowerCase();
+    if (document.getElementById("ScreenshotScrubberReplace").value.toLowerCase().lastIndexOf(document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase()) == -1)
+    {
+        foundCount--;
+        matches[iMatchStart].parentElement.replaceChild(document.createTextNode(document.getElementById("ScreenshotScrubberReplace").value), matches[iMatchStart]);
+    }
+    else
+    {
+        matches[iMatchStart].innerHTML = document.getElementById("ScreenshotScrubberReplace").value;
+        matches[iMatchStart].style.backgroundColor = "yellow";
+        iMatchStart++;
+    }
+    while (curMatchString != document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase())
+    {   
+        curMatchString += matches[iMatchStart].innerText.toLowerCase();
+        matches[iMatchStart].remove();
+    }
+
+    document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+        (searchText == "" ? "<br>" : 
+        "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+        Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
+}
+
 var userSelectedNode = null;
 
 if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
@@ -274,44 +311,36 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
         document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
         var markInstance = new Mark(document.body);
         markInstance.unmark(()=>{});
+        if(updateConfig) {
+            chrome.storage.sync.get("ConfigArray", function(ca) {
+                if (ca.ConfigArray == null)
+                {
+                    var DefaultSettings = new Array(5);
+                    DefaultSettings[0] = ["Microsoft", "Contoso, Ltd."];
+                    DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678"];
+                    DefaultSettings[2] = ["<your name>", "Chris Q. Public"];
+                    DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com"];
+                    DefaultSettings[4] = [document.getElementById("ScreenshotScrubberSearchFor").value, document.getElementById("ScreenshotScrubberReplace").value];
+                    chrome.storage.sync.set({ConfigArray: ca.ConfigArray});
+                }
+                else
+                {
+                    ca.ConfigArray.push([document.getElementById("ScreenshotScrubberSearchFor").value, document.getElementById("ScreenshotScrubberReplace").value;]);
+                    chrome.storage.sync.set({ConfigArray: ca.ConfigArray}, ()=>{
+                        chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
+                    });
+                }
+            });
+        }
     });
     document.getElementById("ScreenshotScrubberSkipButton").addEventListener("click", ()=>{
         ExtraHighlightNextInstance();
     });
-    document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", ()=>{
-        var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
-        var iMatchStart = 0;
-        for (var i = 0; i < matches.length; i++)
-        {
-            if (matches[i].style.backgroundColor == "orange")
-            {
-                iMatchStart = i;
-                i = matches.length;
-            }
-        }
-        ExtraHighlightNextInstance();
-        var curMatchString = matches[iMatchStart].innerText.toLowerCase();
-        if (document.getElementById("ScreenshotScrubberReplace").value.toLowerCase().lastIndexOf(document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase()) == -1)
-        {
-            foundCount--;
-            matches[iMatchStart].parentElement.replaceChild(document.createTextNode(document.getElementById("ScreenshotScrubberReplace").value), matches[iMatchStart]);
-        }
-        else
-        {
-            matches[iMatchStart].innerHTML = document.getElementById("ScreenshotScrubberReplace").value;
-            matches[iMatchStart].style.backgroundColor = "yellow";
-            iMatchStart++;
-        }
-        while (curMatchString != document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase())
-        {   
-            curMatchString += matches[iMatchStart].innerText.toLowerCase();
-            matches[iMatchStart].remove();
-        }
-
-        document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-            (searchText == "" ? "<br>" : 
-            "<b class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-            Found " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + ".&nbsp;&nbsp;&nbsp;</b>");
+    document.getElementById("ScreenshotScrubberReplaceButton").addEventListener("click", Replace);
+    document.getElementById("ScreenshotScrubberReplaceAllButton").addEventListener("click", ()=>{
+        var iCountToReplace = foundCount;
+        for (var i = 0; i < iCountToReplace; i++)
+            Replace();
     });
 
     document.addEventListener("keydown", ProcessKeyDown);
