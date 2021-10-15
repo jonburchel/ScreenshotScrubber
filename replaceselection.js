@@ -175,7 +175,7 @@ function HighlightText()
     var markInstance = new Mark(document.body);
     markInstance.unmark({
         done: function(){
-          markInstance.mark(s, {
+            markInstance.mark(s, {
                 each: ProcessMatch, 
                 accuracy: "partially",
                 className: "ScreenshotScrubberHighlightedText", 
@@ -234,8 +234,8 @@ function HighlightText()
                         ExtraHighlightNextInstance();
 
                 }
-        });
-      }
+            });
+        }
     });
 }
 
@@ -358,10 +358,9 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
 
     document.getElementById("ScreenshotScrubberCloseButton").addEventListener("click", ()=> {
         document.removeEventListener("keydown", ProcessKeyDown, false);
-        document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
         var markInstance = new Mark(document.body);
         markInstance.unmark(()=>{});
-        if(updateConfig) {
+        if(document.getElementById("ScreenshotScrubberSaveToConfig").checked) {
             chrome.storage.sync.get("ConfigArray", function(ca) {
                 if (ca.ConfigArray == null)
                 {
@@ -380,8 +379,12 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null)
                         chrome.runtime.sendMessage({ from: "replaceText" }, function(response) {});
                     });
                 }
+                document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
             });
         }
+        else
+            document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+        
     });
     document.getElementById("ScreenshotScrubberSkipButton").addEventListener("click", ()=>{
         ExtraHighlightNextInstance();

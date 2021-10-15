@@ -4,11 +4,55 @@ function escapeRegex(string) {
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-function findAndReplace(searchText, replacement, searchNode) {
-    var regex = new RegExp("((?<=>)[^<]*)(" + escapeRegex(searchText) + ")([^<]*)", 'g');
-    try { 
-        searchNode.innerHTML = searchNode.innerHTML.replace(regex, "$1" + replacement + "$3") 
-    } catch(e) {} // ignore any errors caused by script replacement on the page
+
+function findAndReplace(s, replacement) {
+    var markInstance = new Mark(document.body);
+    markInstance.unmark({
+        done: function(){
+            markInstance.mark(s, {
+                accuracy: "partially",
+                className: "ScreenshotScrubberHighlightedText", 
+                ignoreJoiners: true,
+                acrossElements: true,
+                iframes: true,
+                iframesTimeout: 500,
+                separateWordSearch: false,
+                element: "span",
+                exclude: [".ignore", "noscript", "script"],
+                filter: (node, range, term, count) => {
+                    if (node.parentElement.offsetParent == null)
+                        return false;
+                    else 
+                        return true;
+                },
+                done: count => { 
+                    var searchText = s.toLowerCase();
+                    var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                    foundCount = 0;
+                    var curMatchesString = "";
+                    for (var i = 0; i < marks.length; i++)
+                    {
+                        if (curMatchesString == "")
+                        {
+                            curMatchesString = marks[i].innerText;
+                            marks[i].parentElement.replaceChild(document.createTextNode(replacement), marks[i]);
+                        }
+                        else
+                        {
+                            curMatchesString += marks[i].innerText;
+                            marks[i].remove();
+                        }
+                        if (curMatchesString.toLowerCase() === searchText)
+                        {
+                            foundCount++;
+                            curMatchesString = "";
+                        }
+                    }
+                }
+            });
+        }
+    });
+    
 }
 
 function ReadImageStorageSynchronous (key) {
@@ -44,7 +88,7 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
         {
             for (var i = 0; i < ca.ConfigArray.length; i++)
             {
-                findAndReplace(ca.ConfigArray[i][0], ca.ConfigArray[i][1], document.body);
+                findAndReplace(ca.ConfigArray[i][0], ca.ConfigArray[i][1]);
             }
             LoadImagesFromStorage(function () {
                 if (ImageArrayJson!= "")
