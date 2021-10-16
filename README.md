@@ -1,4 +1,6 @@
-The Screenshot Scrubber allows you to easily replace text and images in web pages, to remove personally identifiable information (PII) to prepare the pages for screenshots in documentation.
+# Screenshot Scrubber
+
+The Screenshot Scrubber browser extension allows you to easily replace text and images in web pages to remove personally identifiable information (PII) to prepare the pages for screenshots in documentation.  It can also have fun other uses to trick family members into thinking you or they are in the news, or  to prove that your checking account has ten billion dollars.
 
 ## Installation
 
