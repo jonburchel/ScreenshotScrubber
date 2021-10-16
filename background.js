@@ -31,7 +31,6 @@ chrome.runtime.onInstalled.addListener(()=>{
     contexts:["all"],
     id: "ScreenScrubberPickImageMenu",
   });
-
   chrome.contextMenus.create({
     title:"Replace text with Screenshot Scrubber (Ctrl+Shift+H)",
     contexts: ["all"],

@@ -47,11 +47,14 @@ function PickImage(mousePos)
           setTimeout(() => { 
             try
             {
-              chrome.runtime.sendMessage(msg, function(response) {}); 
+              chrome.runtime.sendMessage(msg, function(response) {
+                return Promise.resolve();
+              }); 
             }
             catch (e)
             {
               alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
+              return Promise.resolve();
             }
           }, 0);
 
@@ -70,7 +73,8 @@ document.addEventListener('mouseup', function(mousePos){
 chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
   if (message.action == "ReplaceImage" && GlobalPos != null)
     PickImage(GlobalPos)
-  return Promise.resolve("Message handled.");
+  else
+    return Promise.resolve("Message handled.");
 });
 
 var scr = document.createElement("script");
