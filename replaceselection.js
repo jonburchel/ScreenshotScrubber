@@ -249,6 +249,7 @@ function HighlightText()
         return;
     }
     var highlightedNode = Array.from(document.getElementsByClassName("ScreenshotScrubberHighlightedText")).filter(elem=>elem.style.backgroundColor == "orange")[0];
+    
     if (highlightedNode != undefined)
     {
         userSelectedNode = document.createRange();
@@ -279,72 +280,102 @@ function HighlightText()
                             return true;
                     },
                     done: count => { 
-                        var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
-                        var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
-                        foundCount = 0;
-                        var curMatchesString = ""
-                        for (var i = 0; i < marks.length; i++)
+                        if (count > 0)
                         {
-                            curMatchesString += marks[i].innerText;
-                            if (curMatchesString.toLowerCase() === searchText)
+                            var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
+                            var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                            foundCount = 0;
+                            var curMatchesString = ""
+                            for (var i = 0; i < marks.length; i++)
                             {
-                                foundCount++;
-                                curMatchesString = "";
+                                curMatchesString += marks[i].innerText;
+                                if (curMatchesString.toLowerCase() === searchText)
+                                {
+                                    foundCount++;
+                                    curMatchesString = "";
+                                }
                             }
-                        }
 
-                        // Add extra highlighting to the user selected text.
-                        if (userSelectedNode != undefined)
-                        {
-                            var curSelectedText = ""
-                            var curNode = userSelectedNode.startContainer.nextSibling;
-                            if ((curNode == null || curNode.className != "ScreenshotScrubberHighlightedText") && userSelectedNode != null)
-                                curNode = userSelectedNode.startContainer.children[0];
-                            if (curNode != null)
-                                curNode.id = "UserSelectedText";
-                            var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
-                            var selectedItemIndex = 0;
-                            for (var i = 0; i < matches.length; i++)
+                            // Add extra highlighting to the user selected text.
+                            if (userSelectedNode != undefined)
                             {
-                                curSelectedText += matches[i].innerText;
-                                if (curSelectedText.toLowerCase() == searchText)
+                                var curSelectedText = ""
+                                var curNode = userSelectedNode.startContainer;
+                                if (document.getElementById("ScreenshotScrubberSearchBackward").checked)
                                 {
-                                    selectedItemIndex++;
-                                    curSelectedText = "";
+                                    for (var i = marks.length - 1; i > 0; i--)
+                                        if (curNode.compareDocumentPosition(marks[i]) == Node.DOCUMENT_POSITION_PRECEDING)
+                                        {
+                                            curNode = marks[i];
+                                            i = 0;
+                                        }
                                 }
-                                if (matches[i].id == "UserSelectedText")
+                                else
                                 {
-                                    if (matches[i].innerText.toLowerCase() != searchText)
+                                    for (var i = 0; i < marks.length; i++)
+                                        if (curNode.compareDocumentPosition(marks[i]) == Node.DOCUMENT_POSITION_FOLLOWING)
+                                        {
+                                            curNode = marks[i];
+                                            i = marks.length;
+                                        }
+                                }
+
+                                if (curNode != null)
+                                    curNode.id = "UserSelectedText";
+                                var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                                var selectedItemIndex = 0;
+                                for (var i = 0; i < matches.length; i++)
+                                {
+                                    curSelectedText += matches[i].innerText;
+                                    if (curSelectedText.toLowerCase() == searchText)
+                                    {
                                         selectedItemIndex++;
-                                    break;
+                                        curSelectedText = "";
+                                    }
+                                    if (matches[i].id == "UserSelectedText")
+                                    {
+                                        if (matches[i].innerText.toLowerCase() != searchText)
+                                            selectedItemIndex++;
+                                        break;
+                                    }
                                 }
+                                curSelectedText = "";
+
+                                matches[i].scrollIntoView({behavior:"smooth", block: "center", inline: "center"});
+                                while (i < matches.length && curSelectedText.toLowerCase() != searchText)
+                                {
+                                    curSelectedText += matches[i].innerText;
+                                    matches[i].style.backgroundColor = "orange";
+                                    i++;
+                                }
+                                document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+                                (searchText == "" ? "<br>" : 
+                                    (foundCount == 0 ? 
+                                        "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                                        Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
+                                        "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
+                                        selectedItemIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
+                                    )
+                                );
                             }
-                            curSelectedText = "";
-                            while (i < matches.length && curSelectedText.toLowerCase() != searchText)
-                            {
-                                curSelectedText += matches[i].innerText;
-                                matches[i].style.backgroundColor = "orange";
-                                i++;
-                            }
-                            document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-                            (searchText == "" ? "<br>" : 
-                                (foundCount == 0 ? 
-                                    "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                                    Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
-                                    "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
-                                    selectedItemIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
-                                )
-                            );
+                            else
+                                ExtraHighlightNextInstance();
+                            UpdateButtonStates();
                         }
                         else
-                            ExtraHighlightNextInstance();
-                        UpdateButtonStates();
+                        {
+                            document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+                                "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                                Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>";                   
+                            foundCount = 0;
+                            UpdateButtonStates();
+                        }
                     }
                 });
             }
             else
             {
-                document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = "<br>";
+                document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = "<br>";                    
                 foundCount = 0;
                 UpdateButtonStates();
             }
