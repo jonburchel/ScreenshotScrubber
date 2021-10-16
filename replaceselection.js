@@ -341,7 +341,11 @@ function HighlightText()
                                 }
                                 curSelectedText = "";
 
-                                if (i >= matches.length) i = 0;
+                                if (i >= matches.length) 
+                                {
+                                    i = 0;
+                                    selectedItemIndex = 1;
+                                }
                                 matches[i].scrollIntoView({behavior:"smooth", block: "center", inline: "center"});
                                 while (i < matches.length && curSelectedText.toLowerCase() != searchText)
                                 {
