@@ -417,8 +417,8 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
     divDialog.className = "ScreenScrubberReplacePromptOverlay";
     divDialog.id = divDialog.className;
     divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: 20px; left: " + (window.innerWidth - 430) + "px;width: \
-                                    383px; height: 190px; border-radius: 6px; font-weight: 300;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
-        <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
+                                    400px; height: 190px; border-radius: 6px; font-weight: 300;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
+        <table class='ScreenshotScrubberDialogStyle' width=100% height=100% style='width: 400px;'>\
             <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
                 <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
                     &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:-1px;left: 3px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;' \

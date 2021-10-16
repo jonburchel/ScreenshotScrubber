@@ -18,16 +18,26 @@
   #ScreenScrubberReplacePromptOverlay table
   {
     margin: 0px;
-    height: 170px;
+    height: 190px;
   }
 
-  #ScreenshotScrubberDialogStyle input
+  .ScreenshotScrubberDialogStyle input
   {
     font-family: Segoe UI;
     margin-left: 3px;
     margin-right: 3px;
     border-radius: 3px;
     text-indent: 3px;
+  }
+
+  .ScreenshotScrubberDialogStyle input[type=text]
+  {
+    height:16px;
+  }
+
+  .ScreenshotScrubberDialogStyle input[type=checkbox]
+  {
+    opacity:100%; position:relative;left:0px;margin:0px;top:-1px;vertical-align:middle;
   }
 
   @-webkit-keyframes bluePulse {
