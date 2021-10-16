@@ -344,9 +344,9 @@ function HighlightText()
             }
             else
             {
-                document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-                    "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                    Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>";
+                document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = "<br>";
+                foundCount = 0;
+                UpdateButtonStates();
             }
         }
     });
