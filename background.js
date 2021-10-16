@@ -1,9 +1,5 @@
 function createScreenshot(callback) {
-  chrome.windows.update(lastActiveWindowId, {focused: true}, (window) => {
-    chrome.tabs.update(lastActiveTabId, {active: true}, ()=>{
-        chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);      
-    });
-  })
+  chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);      
 }
 
 var lastActiveTabId = null;
