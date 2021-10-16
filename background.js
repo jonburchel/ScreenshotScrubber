@@ -164,7 +164,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
         chrome.tabs.update(lastActiveTabId, {active: true}, tab=>{
           if (tab.url.lastIndexOf("chrome", 0) == 0)
           {
-            console.log(tab.url);
             sendResponse({status: "ChromeURL"});
             return Promise.resolve("Chrome URL was last active tab");
           }

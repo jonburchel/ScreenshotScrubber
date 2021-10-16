@@ -133,7 +133,6 @@ function ExtraHighlightNextInstance()
             if (!extraHighlighted)
             {
                 iSelectedIndex = 1;
-                console.log(0);
                 var i = 0;
                 curMatchesString = "";
                 while (i < matches.length && curMatchesString.toLowerCase() != searchText)
@@ -241,86 +240,97 @@ function HighlightText()
         document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
         return;
     }
+    var highlightedNode = Array.from(document.getElementsByClassName("ScreenshotScrubberHighlightedText")).filter(elem=>elem.style.backgroundColor == "orange")[0];
+    if (highlightedNode != undefined)
+    {
+        userSelectedNode = document.createRange();
+        userSelectedNode.setStart(highlightedNode, 0);
+        userSelectedNode.setEnd(highlightedNode, 0);
+    }
+    
     markInstance.unmark({
         done: function(){
-            markInstance.mark(s, {
-                each: ProcessMatch, 
-                accuracy: "partially",
-                className: "ScreenshotScrubberHighlightedText", 
-                caseSensitive: document.getElementById("ScreenshotScrubberCaseSensitivity").checked,
-                ignoreJoiners: true,
-                acrossElements: true,
-                iframes: true,
-                iframesTimeout: 500,
-                separateWordSearch: false,
-                element: "span",
-                exclude: [".ignore", "noscript", "script"],
-                filter: (node, range, term, count) => {
-                    if (node.parentElement.offsetParent == null)
-                        return false;
-                    else 
-                        return true;
-                },
-                done: count => { 
-                    var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
-                    var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
-                    foundCount = 0;
-                    var curMatchesString = ""
-                    for (var i = 0; i < marks.length; i++)
-                    {
-                        curMatchesString += marks[i].innerText;
-                        if (curMatchesString.toLowerCase() === searchText)
+            if (s.trim() != "")
+            {
+                markInstance.mark(s, {
+                    each: ProcessMatch, 
+                    accuracy: "partially",
+                    className: "ScreenshotScrubberHighlightedText", 
+                    caseSensitive: document.getElementById("ScreenshotScrubberCaseSensitivity").checked,
+                    ignoreJoiners: true,
+                    acrossElements: true,
+                    iframes: true,
+                    iframesTimeout: 500,
+                    separateWordSearch: false,
+                    element: "span",
+                    exclude: [".ignore", "noscript", "script"],
+                    filter: (node, range, term, count) => {
+                        if (node.parentElement.offsetParent == null)
+                            return false;
+                        else 
+                            return true;
+                    },
+                    done: count => { 
+                        var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
+                        var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                        foundCount = 0;
+                        var curMatchesString = ""
+                        for (var i = 0; i < marks.length; i++)
                         {
-                            foundCount++;
-                            curMatchesString = "";
+                            curMatchesString += marks[i].innerText;
+                            if (curMatchesString.toLowerCase() === searchText)
+                            {
+                                foundCount++;
+                                curMatchesString = "";
+                            }
                         }
-                    }
 
-                    // Add extra highlighting to the user selected text.
-                    if (userSelectedNode != undefined)
-                    {
-                        var curSelectedText = ""
-                        var curNode = userSelectedNode.startContainer.nextSibling;
-                        curNode.id = "UserSelectedText";
-                        var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
-                        var selectedItemIndex = 0;
-                        for (var i = 0; i < matches.length; i++)
+                        // Add extra highlighting to the user selected text.
+                        if (userSelectedNode != undefined)
                         {
-                            curSelectedText += matches[i].innerText;
-                            if (curSelectedText.toLowerCase() == searchText)
+                            var curSelectedText = ""
+                            var curNode = userSelectedNode.startContainer.nextSibling;
+                            curNode.id = "UserSelectedText";
+                            var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
+                            var selectedItemIndex = 0;
+                            for (var i = 0; i < matches.length; i++)
                             {
-                                selectedItemIndex++;
-                                curSelectedText = "";
-                            }
-                            if (matches[i].id == "UserSelectedText")
-                            {
-                                if (matches[i].innerText.toLowerCase() != searchText)
+                                curSelectedText += matches[i].innerText;
+                                if (curSelectedText.toLowerCase() == searchText)
+                                {
                                     selectedItemIndex++;
-                                break;
+                                    curSelectedText = "";
+                                }
+                                if (matches[i].id == "UserSelectedText")
+                                {
+                                    if (matches[i].innerText.toLowerCase() != searchText)
+                                        selectedItemIndex++;
+                                    break;
+                                }
                             }
+                            curSelectedText = "";
+                            while (i < matches.length && curSelectedText.toLowerCase() != searchText)
+                            {
+                                curSelectedText += matches[i].innerText;
+                                matches[i].style.backgroundColor = "orange";
+                                i++;
+                            }
+                            document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
+                            (searchText == "" ? "<br>" : 
+                                (foundCount == 0 ? 
+                                    "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
+                                    Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
+                                    "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
+                                    selectedItemIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
+                                )
+                            );
                         }
-                        curSelectedText = "";
-                        while (i < matches.length && curSelectedText.toLowerCase() != searchText)
-                        {
-                            curSelectedText += matches[i].innerText;
-                            matches[i].style.backgroundColor = "orange";
-                            i++;
-                        }
-                        document.getElementById("ScreenshotScrubberFoundCountDiv").innerHTML = 
-                        (searchText == "" ? "<br>" : 
-                            (foundCount == 0 ? 
-                                "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                                Found 0 occurrences.&nbsp;&nbsp;&nbsp;</span>" :
-                                "<span class='ignore' style='-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>" +
-                                selectedItemIndex + " of " + foundCount + " occurrence" + (foundCount == 1 ? "" : "s") + "&nbsp;&nbsp;&nbsp;</span>"
-                            )
-                        );
+                        else
+                            ExtraHighlightNextInstance();
+                        UpdateButtonStates();
                     }
-                    else
-                        ExtraHighlightNextInstance();
-                    UpdateButtonStates();
-                }
-            });
+                });
+            }
         }
     });
 }
