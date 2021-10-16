@@ -226,7 +226,16 @@ function UpdateButtonStates()
 function HighlightText()
 {
     var s = document.getElementById("ScreenshotScrubberSearchFor").value;
-    var markInstance = new Mark(document.body);
+    try
+    {
+        var markInstance = new Mark(document.body);
+    }
+    catch (e)
+    {
+        alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
+        document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+        return;
+    }
     markInstance.unmark({
         done: function(){
             markInstance.mark(s, {
