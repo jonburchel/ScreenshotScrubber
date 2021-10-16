@@ -463,15 +463,16 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
         userSelectedNode = document.getSelection().getRangeAt(0);
 
     var divDialog = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
-    divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;";
+    divDialog.style="position:fixed;z-index:2147483647;left:0;top:0;width:100%;height:100%;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;";
     divDialog.className = "ScreenScrubberReplacePromptOverlay";
+    divDialog.setAttribute("unselectable", "on");
     divDialog.id = divDialog.className;
     divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: 20px; left: " + (window.innerWidth - 430) + "px;width: \
                                     400px; height: 190px; border-radius: 6px; font-weight: 300;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
         <table class='ScreenshotScrubberDialogStyle' width=100% height=100% style='width: 400px;'>\
             <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
                 <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                    &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:-1px;left: 3px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;' \
+                    &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 unselectable='on' style='pointer-events:none;float:left;position:relative; top:-1px;left: 3px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;' \
                     src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/>\
                     <b class='ignore' style='position:relative; top:7px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
                 </th></tr>\
