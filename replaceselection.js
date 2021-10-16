@@ -37,10 +37,10 @@ function findAndReplace(searchText, replacement, searchNode, firstOnly = false) 
 var DivOffset = [0,0];
 function divMove(e)
 {
-        var div = document.getElementById('divDialog');
-        div.style.position = 'fixed';
-        div.style.top = ((e.clientY - DivOffset[1]) + 'px');
-        div.style.left = ((e.clientX - DivOffset[0]) + 'px');
+    var div = document.getElementById('divDialog');
+    div.style.position = 'fixed';
+    div.style.top = ((e.clientY - DivOffset[1]) + 'px');
+    div.style.left = ((e.clientX - DivOffset[0]) + 'px');
 }
 
 function mouseUp(e)
@@ -50,7 +50,12 @@ function mouseUp(e)
 
 function mouseDown(e)
 {
-    DivOffset = [e.offsetX, e.offsetY];
+    var divDialog = document.getElementById("divDialog");
+
+    var offsetY = e.path[0].getBoundingClientRect().top - divDialog.getBoundingClientRect().top + e.offsetY;
+    var offsetX = e.path[0].getBoundingClientRect().left - divDialog.getBoundingClientRect().left + e.offsetX;
+
+    DivOffset = [e.offsetX, offsetY];
     window.addEventListener('mousemove', divMove, true);
 }
 
@@ -403,7 +408,8 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
         <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
             <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\
                 <th class='ScreenshotScrubberDialogStyle' colspan=2 style='text-align:left; border-bottom: solid gray 2px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'>\
-                    &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;' src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/>\
+                    &nbsp;<img class='ScreenshotScrubberDialogStyle' width=24 style='float:left;position:relative; top:4px;left: 3px;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;' \
+                    src='" + chrome.runtime.getURL("images/DocScreenshotScrubberIcon32.png") + "'/>\
                     <b class='ignore' style='position:relative; top:7px; left: 8px;'>Screenshot Scrubber - Replace Text</b>\
                 </th></tr>\
             <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
@@ -451,7 +457,7 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
 
     HighlightText(); 
 
-    document.getElementById('ScreenshotScrubberDialogHeaderRow').addEventListener('mousedown', mouseDown, false);
+    document.getElementById('divDialog').addEventListener('mousedown', mouseDown, false);
     window.addEventListener('mouseup', mouseUp, false);
 
     document.getElementById("ScreenshotScrubberSearchBackward").addEventListener("change", ()=>{
