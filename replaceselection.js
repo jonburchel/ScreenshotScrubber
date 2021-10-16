@@ -298,7 +298,10 @@ function HighlightText()
                         {
                             var curSelectedText = ""
                             var curNode = userSelectedNode.startContainer.nextSibling;
-                            curNode.id = "UserSelectedText";
+                            if ((curNode == null || curNode.className != "ScreenshotScrubberHighlightedText") && userSelectedNode != null)
+                                curNode = userSelectedNode.startContainer.children[0];
+                            if (curNode != null)
+                                curNode.id = "UserSelectedText";
                             var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
                             var selectedItemIndex = 0;
                             for (var i = 0; i < matches.length; i++)
