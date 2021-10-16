@@ -26,7 +26,8 @@ function findAndReplace(s, replacement, matchCase) {
                     var marks = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
                     foundCount = 0;
                     var curMatchesString = "";
-                    for (var i = 0; i < marks.length; i++)
+                    var i = 0;
+                    while (i < marks.length)
                     {
                         if (curMatchesString == "")
                         {
