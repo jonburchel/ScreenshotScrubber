@@ -56,7 +56,7 @@ function PickImage(mousePos)
               alert("The extension has been reloaded since this page was refreshed.  Please refresh the page and try again.");
               return Promise.resolve();
             }
-          }, 0);
+          }, 1);
 
           i = elems.length;
         }

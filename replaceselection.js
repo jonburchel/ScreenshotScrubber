@@ -111,7 +111,7 @@ function ExtraHighlightNextInstance()
                         i++;
                     }
                     if (i <= matches.length)
-                        matches[i - 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
+                        matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
                     i == matches.length;
                     iSelectedIndex++;
                 }
@@ -138,7 +138,7 @@ function ExtraHighlightNextInstance()
                     i++;
                 }
                 if (matches.length > 0)
-                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
+                    matches[i - 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
             }
         }
         else
@@ -163,7 +163,7 @@ function ExtraHighlightNextInstance()
                         curMatchesString = matches[i].innerText + curMatchesString;
                         i--;
                     }
-                    if (i >= -1) matches[i + 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
+                    if (i >= -1) matches[i + 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
                     i == 0;
                     iSelectedIndex--;
                 }
@@ -189,7 +189,7 @@ function ExtraHighlightNextInstance()
                     i--;
                 }
                 if (matches.length > i + 1)
-                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "start", inline: "start"});
+                    matches[i + 1].scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
             }
         }
     }
@@ -386,10 +386,10 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
         userSelectedNode = document.getSelection().getRangeAt(0);
 
     var divDialog = document.body.insertBefore(document.createElement('div'), document.body.firstChild);
-    divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;";
+    divDialog.style="position:absolute;z-index:2147483647;left:0;top:0;width:100%;height:100%;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;";
     divDialog.className = "ScreenScrubberReplacePromptOverlay";
     divDialog.id = divDialog.className;
-    divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: " + ((window.innerHeight / 2) - 85) + "px; left: " + ((window.innerWidth / 2) - 200) + "px;width: \
+    divDialog.innerHTML = "<div class='ScreenshotScrubberDialogStyle' id='divDialog' style='border: solid gray 2px; position:fixed; top: 20px; left: " + (window.innerWidth - 430) + "px;width: \
                                     400px; height: 190px; border-radius: 6px; font-weight: 300;background: rgba(85, 126, 200,.75);backdrop-filter: blur(2px);'>\
         <table class='ScreenshotScrubberDialogStyle' width=100% height=100%>\
             <tr class='ScreenshotScrubberDialogStyle' id='ScreenshotScrubberDialogHeaderRow'  style='height: 30px; font-size: large;'>\

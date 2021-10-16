@@ -1,5 +1,4 @@
-function createScreenshot(callback) {
-  chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);      
+function createScreenshot(callback) { chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);      
 }
 
 var lastActiveTabId = null;
@@ -31,6 +30,7 @@ chrome.runtime.onInstalled.addListener(()=>{
     contexts:["all"],
     id: "ScreenScrubberPickImageMenu",
   });
+
   chrome.contextMenus.create({
     title:"Replace text with Screenshot Scrubber (Ctrl+Shift+H)",
     contexts: ["all"],

@@ -82,7 +82,7 @@ function ReadImageStorageSynchronous (key) {
     return new Promise((resolve) => {
         chrome.storage.local.get(key, function (result) {    
             if (result[key] === undefined) {
-                resolve(undefined);
+                resolve();
               } else {
                 ImageArrayJson += result[key];
                 resolve();
