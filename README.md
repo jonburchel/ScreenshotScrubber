@@ -1,6 +1,6 @@
 The Screenshot Scrubber allows you to easily replace text and images in web pages, to remove personally identifiable information (PII) to prepare the pages for screenshots in documentation.
 
-To install, just unzip the ScreenshotScrubber.zip file onto your machine, and then use your browser's Extension Manager and select **Load Unpacked**, and browse to the location of the ScreenshotScrubber you just unzipped:
+To install, just unzip the ScreenshotScrubber.zip file onto your machine, and then use your browser's Extension Manager and select **Load Unpacked**, and browse to the location of the ScreenshotScrubber folder you just unzipped:
 
 ![Shows the extension manager's Load Unpacked button in Chrome](https://user-images.githubusercontent.com/5268147/137599180-af70886b-e1ac-4cf9-bc91-b279229ce0d4.png)
 
