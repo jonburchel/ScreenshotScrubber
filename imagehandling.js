@@ -82,11 +82,12 @@ function ReadImageStorageSynchronous (key) {
     return new Promise((resolve) => {
         chrome.storage.local.get(key, function (result) {    
             if (result[key] === undefined) {
-                resolve();
+                resolve(true);
               } else {
                 ImageArrayJson += result[key];
-                resolve();
+                resolve(true);
               }
+            return true;
         });
     });
 }
@@ -96,9 +97,10 @@ function LoadImagesFromStorage(imageElement, callback) {
         for (var StoreItem = 0; StoreItem < StoreLen.ImagesToReplaceLength; StoreItem++)
         {
             var key = "ImagesToReplace_" + StoreItem.toString();
-            await ReadImageStorageSynchronous(key);
+            let response = await ReadImageStorageSynchronous(key);
         }
         callback(imageElement);
+        return true;
     });
 }
 
