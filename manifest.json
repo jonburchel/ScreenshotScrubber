@@ -29,6 +29,13 @@
           "mac": "Alt+H"
         },
         "description": "Replace an image from the current page."
+      },
+      "Scrub" : {
+        "suggested_key": {
+          "default": "Ctrl+Shift+S",
+          "mac": "Ctrl+Shift+S"
+        },
+        "description": "Scrub the current page using configured values."
       }
     },
     "action": {

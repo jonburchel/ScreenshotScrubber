@@ -30,11 +30,15 @@ chrome.runtime.onInstalled.addListener(()=>{
     contexts:["all"],
     id: "ScreenScrubberPickImageMenu",
   });
-
   chrome.contextMenus.create({
     title:"Replace text with Screenshot Scrubber (Ctrl+Shift+H)",
     contexts: ["all"],
     id: "ScreenScrubberReplaceSelectionAnyMenu"
+  });
+  chrome.contextMenus.create({
+    title:"Scrub page with Screenshot Scrubber (Ctrl+Shift+S)",
+    contexts: ["all"],
+    id: "ScreenScrubberScrubMenu"
   });
   chrome.contextMenus.create({
     title:"Replace image with Screenshot Scrubber",
@@ -44,13 +48,15 @@ chrome.runtime.onInstalled.addListener(()=>{
 });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab){
-  if (info.menuItemId == "ScreenScrubberPickImageMenu") {
+  if (info.menuItemId == "ScreenScrubberPickImageMenu") 
+  {
     chrome.scripting.executeScript({
       target: {tabId: tab.id},
       files: ["activatePicker.js"]
     });
   }
-  if (info.menuItemId =="ScreenScrubberReplaceSelectionAnyMenu") {
+  if (info.menuItemId =="ScreenScrubberReplaceSelectionAnyMenu") 
+  {
       chrome.scripting.executeScript({
         target: {tabId: tab.id},
         files: ["replaceselection.js"]
@@ -60,6 +66,13 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
   {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
       chrome.tabs.sendMessage(tabs[0].id, {action: "ReplaceImage", info: info}, function(response) {});  
+    });
+  }
+  if (info.menuItemId =="ScreenScrubberScrubMenu") 
+  {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      files: ["content.js"]
     });
   }
 });
@@ -84,6 +97,13 @@ chrome.commands.onCommand.addListener((c, tab)=>{
     chrome.scripting.executeScript({
       target: {tabId: tab.id},
       files: ["activatePicker.js"]
+    });
+  }
+  if (c=="Scrub")
+  {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      files: ["content.js"]
     });
   }
 });
