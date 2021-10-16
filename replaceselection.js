@@ -66,10 +66,15 @@ function ProcessKeyDown(kv)
 {
     if (kv.keyCode == 27)
     {
-        document.removeEventListener("keydown", ProcessKeyDown, false);
-        document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
-        var markInstance = new Mark(document.body);
-        markInstance.unmark(()=>{});
+        try
+        {
+            document.removeEventListener("keydown", ProcessKeyDown, false);
+            document.getElementById("ScreenScrubberReplacePromptOverlay").remove();
+            var markInstance = new Mark(document.body);
+            markInstance.unmark(()=>{});
+        }
+        catch(e)
+        {} //ignore errors here and just quit
     }
     if (kv.keyCode == 13)
         document.getElementById("ScreenshotScrubberReplaceButton").click();
