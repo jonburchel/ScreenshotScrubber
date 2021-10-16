@@ -227,10 +227,7 @@ function UpdateDefaultMatchSelections()
 function AddImage(e)
 {
     alert("Select an image on the last active tab page to replace.");
-    chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, response=>{
-        alert(response.status);
-
-    });
+    chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, response=>{});
 }
 
 function ProcessImages()
@@ -288,7 +285,7 @@ function ProcessImages()
         else
         {
             //removes display:none and sets bgcolor. this hides the refresh flash...
-            document.body.style = "background:rgba(85, 126, 200,.75);"; 
+            document.body.style = "background:rgba(55, 126, 225,.55);"; 
         }
 
         ImgTable = document.getElementById("ImageList");

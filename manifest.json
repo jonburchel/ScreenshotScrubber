@@ -39,7 +39,7 @@
         "128": "/images/DocScreenshotScrubberIcon128.png"
       }
     },
-    "host_permissions": ["http://*/", "https://*/"],
+    "host_permissions": ["http://*/*", "https://*/*", "<all_urls>"],
     "icons": {
       "16": "/images/DocScreenshotScrubberIcon16.png",
       "32": "/images/DocScreenshotScrubberIcon32.png",

@@ -1,5 +1,9 @@
 function createScreenshot(callback) {
-  chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);
+  chrome.windows.update(lastActiveWindowId, {focused: true}, (window) => {
+    chrome.tabs.update(lastActiveTabId, {active: true}, ()=>{
+        chrome.tabs.captureVisibleTab(null, { format: "png" }, callback);      
+    });
+  })
 }
 
 var lastActiveTabId = null;
@@ -7,7 +11,7 @@ var lastActiveWindowId = null;
 chrome.windows.onFocusChanged.addListener((winId)=>{
   chrome.tabs.query( {windowId: winId, active: true}, (tabs)=>{
     chrome.tabs.get(tabs[0].id, tab=> {
-      if (tab.url != "chrome://extensions/" && tab.url.trim() != "" && tab.url.indexOf("devtools://", 0) != 0 && tab.url.indexOf("chrome-extension://", 0) != 0)
+      if (tab.url.indexOf("chrome://extensions/", 0) != 0 && tab.url.trim() != "" && tab.url.indexOf("devtools://", 0) != 0 && tab.url.indexOf("chrome-extension://", 0) != 0)
       {
         lastActiveTabId = tabs[0].id;
         lastActiveWindowId = tabs[0].windowId;
@@ -17,7 +21,7 @@ chrome.windows.onFocusChanged.addListener((winId)=>{
 });
 chrome.tabs.onActivated.addListener((info)=>{
   chrome.tabs.get(info.tabId, function(tab) {
-        if (tab.url != "chrome://extensions/" && tab.url.trim() != "" && tab.url.indexOf("devtools://", 0) != 0 && tab.url.indexOf("chrome-extension://", 0) != 0)
+        if (tab.url.indexOf("chrome://extensions/", 0) != 0 && tab.url.trim() != "" && tab.url.indexOf("devtools://", 0) != 0 && tab.url.indexOf("chrome-extension://", 0) != 0)
         {
           lastActiveTabId = info.tabId;
           lastActiveWindowId = tab.windowId;
