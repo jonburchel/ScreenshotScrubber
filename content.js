@@ -126,12 +126,10 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
                     }
                 }
             }
-            setTimeout(() => {
+
+            setTimeout(() => { 
                 alert("The page was scrubbed!\n\nIf an image didn't get replaced correctly, try changing the match criteria.");
-            }, 1);
+            }, 333);
         });       
     }
 });
-
-
-
