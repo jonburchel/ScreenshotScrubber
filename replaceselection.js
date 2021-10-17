@@ -53,8 +53,9 @@ function mouseDown(e)
     if (e.path[0].tagName.toLowerCase() != "input")
     {
         var divDialog = document.getElementById("divDialog");
-        var offsetY = e.path[0].getBoundingClientRect().top - divDialog.getBoundingClientRect().top + e.offsetY;
-        DivOffset = [e.offsetX, offsetY];
+        var offsetY = e.clientY - divDialog.getBoundingClientRect().top;
+        var offsetX = e.clientX - divDialog.getBoundingClientRect().left;
+        DivOffset = [offsetX, offsetY];
         window.addEventListener('mousemove', divMove, true);
     }
 }
