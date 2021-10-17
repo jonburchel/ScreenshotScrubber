@@ -24,7 +24,7 @@ You can also replace text and images directly from pages.
 
 Use Shift+Ctrl+H or invoke by menu to replace text dynamically on any page:
 
-![Shows the Screenshot Scrubber dynamic text replacement dialog](https://user-images.githubusercontent.com/5268147/137599391-bbb34cd3-6ec2-491d-9b75-b7d8ca7ab86e.png)
+![Shows the Screenshot Scrubber dynamic text replacement dialog](https://user-images.githubusercontent.com/5268147/137613355-7a8745df-d159-4586-adc5-2b7a4c788da2.png)
 
 ## Image replacement
 
