@@ -53,10 +53,7 @@ function mouseDown(e)
     if (e.path[0].tagName.toLowerCase() != "input")
     {
         var divDialog = document.getElementById("divDialog");
-        
         var offsetY = e.path[0].getBoundingClientRect().top - divDialog.getBoundingClientRect().top + e.offsetY;
-        var offsetX = e.path[0].getBoundingClientRect().left - divDialog.getBoundingClientRect().left + e.offsetX;
-
         DivOffset = [e.offsetX, offsetY];
         window.addEventListener('mousemove', divMove, true);
     }
