@@ -65,7 +65,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
   if(info.menuItemId == "ScreenScrubberReplaceImageMenu")
   {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, {action: "ReplaceImage", info: info}, function(response) {});  
+      chrome.tabs.sendMessage(tabs[0].id, {action: "ReplaceImage", info: info}, function(response) {return true;});  
     });
   }
   if (info.menuItemId =="ScreenScrubberScrubMenu") 
@@ -75,6 +75,7 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
       files: ["content.js"]
     });
   }
+  return true;
 });
 
 chrome.action.onClicked.addListener((tab) => {
@@ -110,10 +111,6 @@ chrome.commands.onCommand.addListener((c, tab)=>{
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) 
 {
-  if (msg.from == 'test')
-  {
-    return Promise.resolve("Message handled.");
-  }
   if (msg.from == 'mouseup') 
   {
     createScreenshot(function (dataURL) 
@@ -132,14 +129,17 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
           '&pixelRatio=' + msg.pixelRatio +
           '&screenImg=' + dataURL;
         if(tabs.length > 0)
-          //chrome.windows.update(tabs[0].windowId, {focused: true}, (window)=>{
-            chrome.tabs.update(tabs[0].id, { url : qryUrl });
-          //});
+          chrome.tabs.update(tabs[0].id, { url : qryUrl }, () =>{
+            sendResponse(true);
+            return true;
+          });
         else
           chrome.tabs.create({ url: qryUrl, active: false }, function(tab) {
-            chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 670, width: 720});
+            chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 670, width: 720}, ()=>{
+              sendResponse(true);
+              return true;
+            });
           });
-        return Promise.resolve("Message handled.");
       });           
     });
   }
@@ -153,7 +153,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
           chrome.tabs.update(tabs[0].id, { url : chrome.runtime.getURL('options.html') + "?imagesRendered=true"  });
         });
       }
-      return Promise.resolve("Message handled.");
+      sendResponse(true);
+      return true;
     });
   }
   if (msg.from == "replaceImageFromOptions")
@@ -164,8 +165,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
         chrome.tabs.update(lastActiveTabId, {active: true}, tab=>{
           if (tab.url.lastIndexOf("chrome", 0) == 0)
           {
-            sendResponse({status: "ChromeURL"});
-            return Promise.resolve("Chrome URL was last active tab");
+            sendResponse(true);
+            return true;
           }
           else
           {
@@ -173,8 +174,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
               target: {tabId: lastActiveTabId},
               files: ["activatePicker.js"]
             });
-            sendResponse({status: "Success"});
-            return Promise.resolve("Success");
+            sendResponse(true);
+            return true;
           }
         });
       });
@@ -182,8 +183,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse)
     else
     {
       sendResponse({status: "NoWindow"});
-      return Promise.resolve("NoWindow");
+      return true;
     }
   }
+  return true;
 });
 

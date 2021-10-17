@@ -229,7 +229,14 @@ function UpdateDefaultMatchSelections()
 function AddImage(e)
 {
     alert("Select an image on the last active tab page to replace.");
-    chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, response=>{});
+    try
+    {
+        chrome.runtime.sendMessage({from: "replaceImageFromOptions"}, response=>{ return true;});
+    }
+    catch (e)
+    {
+        console.log(e);
+    }
 }
 
 function ProcessImages()
