@@ -26,6 +26,11 @@ chrome.tabs.onActivated.addListener((info)=>{
 
 chrome.runtime.onInstalled.addListener(()=>{
   chrome.contextMenus.create({
+    title:"Scrub page with Screenshot Scrubber   (Ctrl+Shift+S)",
+    contexts: ["all"],
+    id: "ScreenScrubberScrubMenu"
+  });
+  chrome.contextMenus.create({
     title:"Pick an image on the current page to replace (Alt+H)",
     contexts:["all"],
     id: "ScreenScrubberPickImageMenu",
@@ -35,13 +40,9 @@ chrome.runtime.onInstalled.addListener(()=>{
     contexts: ["all"],
     id: "ScreenScrubberReplaceSelectionAnyMenu"
   });
+
   chrome.contextMenus.create({
-    title:"Scrub page with Screenshot Scrubber (Ctrl+Shift+S)",
-    contexts: ["all"],
-    id: "ScreenScrubberScrubMenu"
-  });
-  chrome.contextMenus.create({
-    title:"Replace image with Screenshot Scrubber",
+    title:"Replace this image with Screenshot Scrubber",
     contexts: ["image"],
     id: "ScreenScrubberReplaceImageMenu"
   });
