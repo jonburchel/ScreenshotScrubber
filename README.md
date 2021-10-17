@@ -4,9 +4,9 @@ The Screenshot Scrubber browser extension allows you to easily replace text and 
 
 ## Installation
 
-To install, just unzip the ScreenshotScrubber.zip file onto your machine, and then use your browser's Extension Manager and select **Load Unpacked**, and browse to the location of the ScreenshotScrubber folder you just unzipped:
+To install, just unzip the [ScreenshotScrubber.zip](https://github.com/jonburchel/ScreenshotScrubber/releases/download/v1.0/ScreenshotScrubber.zip) file onto your machine, and then use your browser's Extension Manager and select **Load Unpacked**.  Browse to the location of the ScreenshotScrubber folder you just unzipped, and **Select Folder**:
 
-![Shows the extension manager's Load Unpacked button in Chrome](https://user-images.githubusercontent.com/5268147/137599180-af70886b-e1ac-4cf9-bc91-b279229ce0d4.png)
+![Shows the extension manager's Load Unpacked button in Chrome](https://user-images.githubusercontent.com/5268147/137613533-1d66214f-6e21-48ad-a098-8155cff6032e.png)
 
 ## Configuration
 
