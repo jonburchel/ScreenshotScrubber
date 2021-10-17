@@ -8,7 +8,7 @@ chrome.tabs.query({url:[chrome.runtime.getURL('options.html') + "?imagesRendered
         })
     else
         chrome.tabs.create({ url: popupUrl, active: false }, function(tab) {
-           chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 670, width: 720});
+           chrome.windows.create({ tabId: tab.id, type: 'popup', focused: true, top: 100, left: 100, height: 645, width: 720});
         });
     chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){ window.close(); })
 });  
