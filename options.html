@@ -72,7 +72,7 @@
         </style>
     </head>
   <body style="display:none;">
-        <center  style="margin-bottom: -100px;">
+        <center style="margin-bottom: -100px;">
             <b style="font-size:x-large;">Screenshot Scrubber - Options</b>
             <table style="width:100%;">
                 <tr style="vertical-align: top;">
@@ -82,12 +82,11 @@
                     <td>                        
                         <table width="530">
                             <tr><td>
-                                <li>Specify text and image values to replace below.  Some initial suggested values are provided.</li>
-                                <li>Use <i>Ctrl+Shift+S</i> (or click the extension icon <img width=14 src="images/DocScreenshotScrubberIcon32.png" alt="Docs Screenshot Scrubber Icon"/> in your browser) to <b>scrub a page</b>.</li>                    
-                                
-                                <li>Use <i>Ctrl+Shift+H</i> (or the extension context menu) to <b>replace text dynamically</b> on a page.</li>
-                                <li>Use <i>Alt+H</i> (or the extension context menu) to <b>replace images</b> directly from a page.</li><br>
-                                <b>Use these resources for guidance on screenshots and help identifying things to replace:</b><br>
+                                <b>Specify text and image values to replace below.  Some initial suggested values are provided.</b><br>
+                                <li><b>Scrub a page:</b> <i>Ctrl+Shift+S</i> (or click the extension icon <img width=14 src="images/DocScreenshotScrubberIcon32.png" alt="Docs Screenshot Scrubber Icon"/> in the browser).</li>                    
+                                <li><b>Replace text dynamically</b> on a page: <i>Ctrl+Shift+H</i> (or use the extension context menu).</li>
+                                <li><b>Replace images</b> directly from a page: <i>Alt+H</i> (or use the extension context menu).</li><br>
+                                <b>Use these resources for guidance on screenshots and help identifying things to replace:</b>
                                 <li><a href="https://review.docs.microsoft.com/en-us/help/contribute/contribute-how-to-create-screenshot?branch=main#remove-sensitive-information" target="_blank">How to create and format screenshots in documentation</a></li>
                                 <li><a href="https://styleguides.azurewebsites.net/Styleguide/Read?id=2700&topicid=26697" target="_blank">Microsoft Writing Style Guide</a></li>
                                 <li><a href="https://microsoft.sharepoint.com/sites/celaweb-tools/sitepages/fictitiousnamefinder.aspx" target="_blank">Fictitious Name Finder</a></li>
@@ -96,10 +95,10 @@
                     </td>
                 </tr>
             </table>
-            <table style="position:relative;"><tr><td>
+            <table style="position:relative; top:-10px;margin-bottom:-10px;"><tr><td>
                 <h2>Replace text</h2>
                 <center>
-                    <table id="SettingsList">
+                    <table id="SettingsList" style="position:relative;top:-10px;">
                         <tr>
                             <td></td><td><b>Original Text&nbsp;&nbsp;&nbsp;&nbsp;</b></td><td><b>New Text</b></td><td><center><b>Match<br>Case</b></center></td><td></td>
                         </tr>
@@ -124,7 +123,7 @@
                         </tr>
                         <tr>
                             <td width=45 style="border: none;"><b><center>Replace Image</center></b></td>
-                            <td width=285 style="border: none;"><b><center>HTML Tag</center></b></td>
+                            <td width=285 style="border: none;min-width: 327px;"><b><center>HTML Tag</center></b></td>
                             <td width=30 style="border: none; border-left: 1px dashed gray"><b><center>Id</center></b></td>
                             <td width=30 style="border: none;"><b><center>Class</center></b></td>
                             <td width=30 style="border: none;"><b><center>Src</center></b></td>
