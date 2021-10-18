@@ -99,13 +99,7 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
                     var classMatch = elem.querySelector("[class]");
                     var hrefMatch = elem.querySelector("[href]");
                     var srcMatch = elem.querySelector("[src]");
-        
-                    var img= document.createElement("img");
-                    img.src = currentImg.replacementURL;
-                    img.width = currentImg.w;
-                    img.height = currentImg.h;
-                    img.style.objectFit = "cover"
-        
+                          
                     //incomplete...  only matches if a single element has all criteria, 
                     //but need to match if any element where it or any child elements have the criteria too...
                     var qry = (currentImg.matchID ? "[id='" + idMatch.id + "']" : "") +
@@ -114,13 +108,22 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
                         (currentImg.matchClass ? "[class='" + classMatch.className + "']" : "");
                     var matches = document.querySelectorAll(qry);
                     
+                    var img= document.createElement("img");
+                    img.src = currentImg.replacementURL;
+                    img.width = currentImg.w;
+                    img.height = currentImg.h;
+                    img.style.objectFit = "cover"
+
                     for (var j = 0; j < matches.length; j++)
                     {
                         var match = matches[j];
                         if (match.href != undefined) // href containing svg's should be replaced by parent element...
                             match = match.parentElement;
                         if (currentImg.replacementURL != "")
+                        {
+                            img.className = match.className;  // this often preserves formatting for the image, e.g. rounded corners, etc.
                             match.replaceWith(img);
+                        }
                         else
                             match.remove();
                     }
