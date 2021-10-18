@@ -391,9 +391,11 @@ function Replace()
 {
     var selectedItemIndex = 0;
     var searchText = document.getElementById("ScreenshotScrubberSearchFor").value.toLowerCase();
+
     var matches = document.getElementsByClassName("ScreenshotScrubberHighlightedText");
     var iMatchStart = 0;
     var curMatchString = "";
+    console.log(matches);
     for (var i = 0; i < matches.length; i++)
     {
         curMatchString += matches[i].innerText;
@@ -480,7 +482,7 @@ if (document.getElementById("ScreenScrubberReplacePromptOverlay") == null && doc
                 <td class='ScreenshotScrubberDialogStyle'>\
                     <input class='ScreenshotScrubberDialogStyle' autocomplete='off' type=text \
                         style='width: 297px; margin-bottom: 5px; margin-top: 5px;border-width: 1px;padding: 0px; font-size:small;' \
-                        size=45 id='ScreenshotScrubberSearchFor' value='" + searchText + "'/>\
+                        size=45 id='ScreenshotScrubberSearchFor' value='" + htmlEscape(searchText) + "'/>\
                 </td>\
             </tr>\
             <tr class='ScreenshotScrubberDialogStyle' style='height: 20px;font-size:small;'>\
