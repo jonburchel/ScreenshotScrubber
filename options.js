@@ -16,11 +16,12 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
     var DefaultSettings = null;
     if (ca.ConfigArray == null)
     {
-        DefaultSettings = new Array(4);
-        DefaultSettings[0] = ["Microsoft", "Contoso, Ltd.", false];
-        DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
-        DefaultSettings[2] = ["<your name>", "Chris Q. Public", false];
-        DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
+        DefaultSettings = new Array(5);
+        DefaultSettings[0] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
+        DefaultSettings[1] = ["<your name>", "Chris Q. Public", false];
+        DefaultSettings[2] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
+        DefaultSettings[3] = ["MICROSOFT.", "CONTOSO.", true];
+        DefaultSettings[4] = ["Microsoft", "Contoso, Ltd.", false];
         chrome.storage.sync.set({ConfigArray: DefaultSettings});
     }
     else
