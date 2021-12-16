@@ -16,12 +16,10 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
     var DefaultSettings = null;
     if (ca.ConfigArray == null)
     {
-        DefaultSettings = new Array(5);
-        DefaultSettings[0] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
-        DefaultSettings[1] = ["<your name>", "Chris Q. Public", false];
-        DefaultSettings[2] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
-        DefaultSettings[3] = ["MICROSOFT.", "CONTOSO.", true];
-        DefaultSettings[4] = ["Microsoft", "Contoso, Ltd.", false];
+        DefaultSettings = new Array(3);
+        DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
+        DefaultSettings[2] = ["<your name>", "Chris Q. Public", false];
+        DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
         chrome.storage.sync.set({ConfigArray: DefaultSettings});
     }
     else
@@ -97,6 +95,17 @@ function StoreConfigValues()
         ReplaceValues[i] = [SettingsList.rows[i + 1].cells[1].children[0].value, 
                             SettingsList.rows[i + 1].cells[2].children[0].value, 
                             SettingsList.rows[i + 1].cells[3].children[0].checked];
+    }
+    // Ensure replacement values that are contained in other replacement values are replaced only after the other replacement values are replaced.
+    for (var i = 0; i < ReplaceValues.length; i++)
+    {
+        var newIndex = ReplaceValues.findIndex(e=> e[0].toLowerCase().includes(ReplaceValues[i][0].toLowerCase()) && e[0] != ReplaceValues[i][0]);
+        if (newIndex > i)
+        {
+            var old = ReplaceValues[i];
+            ReplaceValues[i] = ReplaceValues[newIndex]
+            ReplaceValues[newIndex] = old;
+        }
     }
     chrome.storage.sync.set({ConfigArray: ReplaceValues});
     FlashSaved();
