@@ -5,6 +5,39 @@ document.getElementById("New0").addEventListener("input", function(e) { DataChan
 document.getElementById("Delete0").addEventListener("click", function(e) { DeleteRow(e); });
 document.getElementById("CaseSensitive0").addEventListener("change", StoreConfigValues);
 
+document.getElementById("ImportBtn").addEventListener("click", function()
+{
+    document.getElementById("ImportSettingsFile").click();
+    
+});
+document.getElementById("ExportBtn").addEventListener("click", function()
+{
+    if (ImageArrayJson!= "[]" && ImageArrayJson != "")
+    {
+        chrome.storage.sync.get("ConfigArray", function(ca) { 
+            var element = document.createElement('a');
+            element.setAttribute('href','data:application/xml;charset=utf-8,' + JSON.stringify(ca) + '\r\nScreenshotScrubberImages:\r\n' + encodeURIComponent(ImageArrayJson));
+            element.setAttribute('download', "ScreenshotScrubberSettings.json");
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        });
+    }
+});
+document.getElementById("ImportSettingsFile").addEventListener("change", function() {
+    var file = this.files[0];
+    if (file)
+    {
+        file.text().then(function(text){
+            var Settings = text.substring(0, text.indexOf("\r\nScreenshotScrubberImages:\r\n"));
+            var Images = text.substring(text.indexOf("\r\nScreenshotScrubberImages:\r\n") + "\r\nScreenshotScrubberImages:\r\n".length);
+            chrome.storage.sync.set({ConfigArray: JSON.parse(Settings).ConfigArray});
+            UpdateImageStore(JSON.parse(Images), "ImagesToReplace")
+            document.location.reload();
+        });
+    }
+})
+
 var typingTimer;
 var doneTypingInterval = 500; // wait 500ms after typing stops to save changed values...
 function doneTyping()
@@ -17,9 +50,9 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
     if (ca.ConfigArray == null)
     {
         DefaultSettings = new Array(3);
-        DefaultSettings[1] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
-        DefaultSettings[2] = ["<your name>", "Chris Q. Public", false];
-        DefaultSettings[3] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
+        DefaultSettings[0] = ["<your subscription id>", "abcdef01-2345-6789-0abc-def012345678", false];
+        DefaultSettings[1] = ["<your name>", "Chris Q. Public", false];
+        DefaultSettings[2] = ["<youralias@microsoft.com>", "chrisqpublic@contoso.com", false];
         chrome.storage.sync.set({ConfigArray: DefaultSettings});
     }
     else
@@ -36,7 +69,7 @@ chrome.storage.sync.get("ConfigArray", function(ca) {
         SettingsList.rows[i + 1].cells[2].children[0].value = DefaultSettings[i][1];
         SettingsList.rows[i + 1].cells[3].children[0].checked = DefaultSettings[i][2];
     }
-    AddRowButton.hidden = false;    
+    AddRowButton.hidden = false;
 });
 
 function CreateUniqueID(numDigits = 6) 

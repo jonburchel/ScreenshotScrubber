@@ -7,7 +7,6 @@ var ThumbnailSize = 42;
 
 document.body.addEventListener("load", ProcessImages());
 
-
 function CreateUniqueID(numDigits = 10) 
 {
     var s = "";
