@@ -29,10 +29,32 @@ document.getElementById("ImportSettingsFile").addEventListener("change", functio
     if (file)
     {
         file.text().then(function(text){
-            var Settings = text.substring(0, text.indexOf("\r\nScreenshotScrubberImages:\r\n"));
-            var Images = text.substring(text.indexOf("\r\nScreenshotScrubberImages:\r\n") + "\r\nScreenshotScrubberImages:\r\n".length);
-            chrome.storage.sync.set({ConfigArray: JSON.parse(Settings).ConfigArray});
-            UpdateImageStore(JSON.parse(Images), "ImagesToReplace")
+            var SettingsText = text.substring(0, text.indexOf("\r\nScreenshotScrubberImages:\r\n"));
+            var ImagesText = text.substring(text.indexOf("\r\nScreenshotScrubberImages:\r\n") + "\r\nScreenshotScrubberImages:\r\n".length);
+            
+            var Settings = JSON.parse(SettingsText).ConfigArray;
+            for (var i = 1; i < SettingsList.rows.length - 2; i++)
+            {
+                if (Settings.findIndex(s=>s[0] == SettingsList.rows[i].cells[1].children[0].value) == -1)
+                {
+                    Settings.push([ SettingsList.rows[i].cells[1].children[0].value, 
+                                    SettingsList.rows[i].cells[2].children[0].value, 
+                                    SettingsList.rows[i].cells[3].children[0].checked ]);
+                }
+            }
+            chrome.storage.sync.set({ConfigArray: Settings});
+            
+            var Images = JSON.parse(ImagesText);
+            for (var i = 0; i < ImagesToReplace.length; i++)
+            {
+                if (Images.findIndex(img => img.imgId == ImagesToReplace[i].imgId) == -1)
+                {                  
+                    Images.push({imgId: ImagesToReplace[i].imgId, imageElement: ImagesToReplace[i].imageElement, useSrc: ImagesToReplace[i].useSrc, replacementURL: ImagesToReplace[i].replacementURL, 
+                        t: ImagesToReplace[i].t, l: ImagesToReplace[i].l, w: ImagesToReplace[i].w, h: ImagesToReplace[i].h, r: ImagesToReplace[i].r, iw: ImagesToReplace[i].iw, 
+                        imgSrc: ImagesToReplace[i].imgSrc, matchID: ImagesToReplace[i].matchID, matchClass: ImagesToReplace[i].matchClass, matchSrc: ImagesToReplace[i].matchSrc});
+                }
+            }
+            UpdateImageStore(Images, "ImagesToReplace")
             document.location.reload();
         });
     }
