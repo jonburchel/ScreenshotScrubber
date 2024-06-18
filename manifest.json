@@ -1,7 +1,7 @@
 {
     "name": "Screenshot Scrubber",
     "description": "This extension replaces text and images in web pages to remove PII for screenshots.",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "manifest_version": 3,
     "permissions": ["storage", "activeTab", "scripting", "contextMenus", "tabs", "unlimitedStorage"],
     "options_page": "options_redirector.html",
