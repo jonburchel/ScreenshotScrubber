@@ -159,10 +159,13 @@ function DelImg(e)
 async function ImageSelected(e)
 {
     var r = null; var rib = null;
+    console.log(e);
     var rx = new RegExp("[A-Za-z]*", "g");
-    for (var i = 0; i < e.path.length; i++)
-        if (e.path[i].id != "") break;
-    r = e.path[i].id.replace(rx, "");
+    console.log (e.type, e.target.id);
+    if (e.type == "change") r = e.target.id; else r = "";
+    if (r == "") r = document.elementFromPoint(e.clientX, e.clientY).parentNode.id.replace(rx, "");
+    if (r == "") r = document.elementFromPoint(e.clientX, e.clientY).id.replace(rx, "");
+    console.log(r);
     rib = document.getElementById("ReplaceImageButton" + r);
 
     if (e.srcElement.parentElement.id.search("btnNoImg") != -1 || e.srcElement.id.search("btnNoImg") != -1)
@@ -374,13 +377,9 @@ function ProcessImages()
             browseBtn.addEventListener("click", function (e) { 
                 if (e.isTrusted)
                 {
-                    for (var i = 0; i < e.path.length, i++;)
-                    {
-                        if (e.path[i].id != "")
-                            break;
-                    }
                     var rx = new RegExp("[A-Za-z]*", "g");
-                    var r = e.path[i].id.replace(rx, "");
+                    var r = document.elementFromPoint(e.clientX, e.clientY).parentNode.id.replace(rx, "");
+                    console.log(r)
                     var bd = document.getElementById("browseDialog" + r);
                     if (bd != null)
                         bd.click();
